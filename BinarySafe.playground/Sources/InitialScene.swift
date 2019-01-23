@@ -6,13 +6,13 @@ public class InitialScene: SKScene {
     let borderColor: SKColor = .black
     let centerColor: SKColor = .gray
     
-    private let innerRadius: Int
+    private let innerRadius: Double
     private let numOfLayers: Int
     private let numOfPieces: Int
     private let center: CGPoint
     private var innerCircle: SKShapeNode
     
-    private let lineWidth = 3
+    private let lineWidth: CGFloat = 3
     private let safe = Safe()
     
     private var activeLayer = CircleLayer(layerNumber: 0)
@@ -32,12 +32,12 @@ public class InitialScene: SKScene {
     }
     
     public init(size: CGSize, layers numOfLayers: Int, pieces numOfPieces: Int) {
-        var innerRadius = 0
+        var innerRadius: Double = 0
         
         if size.width > size.height {
-            innerRadius = Int(size.height / 2) / (numOfLayers + 2)
+            innerRadius = Double(size.height / 2) / Double(numOfLayers + 2)
         } else {
-            innerRadius = Int(size.width / 2) / (numOfLayers + 2)
+            innerRadius = Double(size.width / 2) / Double(numOfLayers + 2)
         }
         
         self.innerRadius = innerRadius
@@ -50,25 +50,28 @@ public class InitialScene: SKScene {
     }
     
     public override func didMove(to view: SKView) {
-        self.innerCircle.lineWidth = CGFloat(self.lineWidth)
+        self.innerCircle.lineWidth = self.lineWidth
         self.innerCircle.position = self.center
         self.innerCircle.strokeColor = self.borderColor
         self.innerCircle.fillColor = self.centerColor
         
-        let degreeRange = 360 / self.numOfPieces
+        let degreeRange: Double = 360 / Double(self.numOfPieces)
         
         for iLayer in (1...numOfLayers).reversed() {
-            var startDegree = 90
+            var startDegree: Double = 90
             let layer = CircleLayer(layerNumber: iLayer)
             
             for iPiece in (1...numOfPieces).reversed() {
-                let endDegree = startDegree + degreeRange
+                let endDegree: Double = startDegree + degreeRange
                 
-                let piece = CirclePiece(layer: iLayer, piece: iPiece, degreeRange: degreeRange, startDegree: Double(startDegree), endDegree: Double(endDegree), innerRadius: self.innerRadius)
+                let piece = CirclePiece(piece: iPiece, layer: Double(iLayer), degreeRange: degreeRange, startDegree: startDegree, endDegree: endDegree, innerRadius: self.innerRadius)
                 layer.addPiece(piece)
-                piece.getCircleArc()!.position = self.center
                 
-                self.addChild(piece.getCircleArc()!)
+                guard let circleArc = piece.getCircleArc() else {
+                    return
+                }
+                circleArc.position = self.center
+                self.addChild(circleArc)
                 
                 startDegree -= degreeRange
             }
@@ -82,8 +85,8 @@ public class InitialScene: SKScene {
     
     func touchDown(atPoint pos : CGPoint) {
         let radius = Double(distanceBetweenCGPoints(from: self.center, to: pos))
+        let calculatedLayer = Int(radius / self.innerRadius) - self.numOfLayers
         
-        let calculatedLayer = Int(radius / Double(self.innerRadius)) - self.numOfLayers
         if calculatedLayer > 0 {
             self.activeLayer = self.safe.getLayer(0)
         } else if abs(calculatedLayer) >= self.numOfLayers {
@@ -121,7 +124,6 @@ public class InitialScene: SKScene {
     }
     
     public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print(event)
         for t in touches { touchUp(atPoint: t.location(in: self)) }
     }
     
@@ -133,19 +135,11 @@ public class InitialScene: SKScene {
         // Called before each frame is rendered
     }
     
-    private func degreeToRadians(_ degree: Double) -> Double {
-        return degree * Double.pi / 180.0;
-    }
-    
-    private func radiansToDegree(_ radians: Double) -> Double {
-        return radians * 180.0 / Double.pi;
+    private func distanceBetweenCGPoints(from: CGPoint, to: CGPoint) -> CGFloat {
+        return sqrt(distanceBetweenCGPointsSquared(from: from, to: to))
     }
     
     private func distanceBetweenCGPointsSquared(from: CGPoint, to: CGPoint) -> CGFloat {
         return (from.x - to.x) * (from.x - to.x) + (from.y - to.y) * (from.y - to.y)
-    }
-    
-    private func distanceBetweenCGPoints(from: CGPoint, to: CGPoint) -> CGFloat {
-        return sqrt(distanceBetweenCGPointsSquared(from: from, to: to))
     }
 }
