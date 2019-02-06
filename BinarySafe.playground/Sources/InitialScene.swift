@@ -5,6 +5,7 @@ import Foundation
 public class InitialScene: SKScene {
     let borderColor: SKColor = .black
     let centerColor: SKColor = .gray
+    let lineWidth: CGFloat = 3
     
     private let innerRadius: Double
     private let numOfLayers: Int
@@ -12,16 +13,14 @@ public class InitialScene: SKScene {
     private let center: CGPoint
     private var innerCircle: SKShapeNode
     
-    private let lineWidth: CGFloat = 3
-    private let safe = Safe()
+    private var safe: Safe?
     
-    private var activeLayer = CircleLayer(layerNumber: 0)
+    private var activeLayer = CircleLayer(layerNumber: 0, circlePieces: [], numOfPieces: 0, degreeRange: 0)
     private var pDown = CGPoint()
     private var p1 = CGPoint()
     private var p2 = CGPoint()
     
     required init?(coder aDecoder: NSCoder) {
-        print("init coder")
         self.innerRadius = 0
         self.numOfLayers = 0
         self.numOfPieces = 0
@@ -35,9 +34,9 @@ public class InitialScene: SKScene {
         var innerRadius: Double = 0
         
         if size.width > size.height {
-            innerRadius = Double(size.height / 2) / Double(numOfLayers + 2)
+            innerRadius = Double(size.height / 2) / Double(numOfLayers + 3)
         } else {
-            innerRadius = Double(size.width / 2) / Double(numOfLayers + 2)
+            innerRadius = Double(size.width / 2) / Double(numOfLayers + 3)
         }
         
         self.innerRadius = innerRadius
@@ -57,15 +56,16 @@ public class InitialScene: SKScene {
         
         let degreeRange: Double = 360 / Double(self.numOfPieces)
         
-        for iLayer in (1...numOfLayers).reversed() {
-            var startDegree: Double = 90
-            let layer = CircleLayer(layerNumber: iLayer)
+        var layers = [CircleLayer]()
+        for iLayer in (1...self.numOfLayers).reversed() {
+            var startDegree: Double = 0
+            var circlePieces = [CirclePiece]()
             
-            for iPiece in (1...numOfPieces).reversed() {
+            for _ in 1...self.numOfPieces {
                 let endDegree: Double = startDegree + degreeRange
                 
-                let piece = CirclePiece(piece: iPiece, layer: Double(iLayer), degreeRange: degreeRange, startDegree: startDegree, endDegree: endDegree, innerRadius: self.innerRadius)
-                layer.addPiece(piece)
+                let piece = CirclePiece(layer: Double(iLayer), degreeRange: degreeRange, startDegree: startDegree, endDegree: endDegree, innerRadius: self.innerRadius, numOfPieces: self.numOfPieces)
+                circlePieces.append(piece)
                 
                 guard let circleArc = piece.getCircleArc() else {
                     return
@@ -73,10 +73,19 @@ public class InitialScene: SKScene {
                 circleArc.position = self.center
                 self.addChild(circleArc)
                 
-                startDegree -= degreeRange
+                startDegree += degreeRange
             }
             
-            self.safe.addLayer(layer)
+            layers.append(CircleLayer(layerNumber: iLayer, circlePieces: circlePieces, numOfPieces: self.numOfPieces, degreeRange: degreeRange))
+        }
+        
+        self.safe = Safe(layers: layers, numOfPieces: numOfPieces, numOfLayers: numOfLayers, innerRadius: innerRadius, degreeRange: degreeRange, center: self.center)
+        if let safe = self.safe {
+            let codeLabels = safe.getCodeLabels()
+            for i in 0..<codeLabels.count {
+                self.addChild(codeLabels[i])
+            }
+//            safe.shuffle()
         }
         
         self.backgroundColor = .white
@@ -87,12 +96,15 @@ public class InitialScene: SKScene {
         let radius = Double(distanceBetweenCGPoints(from: self.center, to: pos))
         let calculatedLayer = Int(radius / self.innerRadius) - self.numOfLayers
         
+        guard let safe = self.safe else {
+            return
+        }
         if calculatedLayer > 0 {
-            self.activeLayer = self.safe.getLayer(0)
+            self.activeLayer = safe.getLayer(0)
         } else if abs(calculatedLayer) >= self.numOfLayers {
-            self.activeLayer = self.safe.getLayer(self.numOfLayers - 1)
+            self.activeLayer = safe.getLayer(self.numOfLayers - 1)
         } else {
-            self.activeLayer = self.safe.getLayer(abs(calculatedLayer))
+            self.activeLayer = safe.getLayer(abs(calculatedLayer))
         }
         
         self.pDown = pos
@@ -113,6 +125,10 @@ public class InitialScene: SKScene {
     
     func touchUp(atPoint pos : CGPoint) {
         self.activeLayer.snap(numOfPieces: CGFloat(self.numOfPieces))
+        
+        if let safe = self.safe {
+            safe.getDegPos()
+        }
     }
     
     public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
