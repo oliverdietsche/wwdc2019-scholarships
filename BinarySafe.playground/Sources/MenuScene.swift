@@ -2,7 +2,7 @@ import PlaygroundSupport
 import SpriteKit
 import Foundation
 
-public class InitialScene: SKScene {
+public class MenuScene: SKScene {
     
     var gameData: GameData
     var layers_label: UILabel?
@@ -93,10 +93,11 @@ public class InitialScene: SKScene {
     }
     
     @objc func startGame(_ sender: UIButton) {
+        let newScene = GameScene(gameData)
         guard let view = self.view else {
             return
         }
         view.subviews.forEach({ $0.removeFromSuperview() })
-        view.presentScene(self.gameData.newGameScene(), transition: SKTransition.crossFade(withDuration: 1))
+        view.presentScene(newScene, transition: SKTransition.fade(with: UIColor.black, duration: 0.8))
     }
 }

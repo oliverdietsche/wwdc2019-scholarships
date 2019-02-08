@@ -2,14 +2,12 @@ import PlaygroundSupport
 import SpriteKit
 import Foundation
 
-let width = 500
-let height = 500
-let layers = 3
-let pieces = 6
+let gameData = GameData(layers: 3, pieces: 4, borderColor: .black, fillColor: .lightGray, centerColor: .gray)
 
-let sceneView = SKView(frame: CGRect(x: 0, y: 0, width: width, height: height))
-let scene = InitialScene(size: CGSize(width: width, height: height), layers: layers, pieces: pieces)
+let sceneView = SKView(frame: CGRect(x: 0, y: 0, width: gameData.width, height: gameData.height))
 
-sceneView.presentScene(scene)
+let initialScene = InitialScene(gameData)
+
+sceneView.presentScene(initialScene)
 
 PlaygroundSupport.PlaygroundPage.current.liveView = sceneView

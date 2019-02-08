@@ -1,54 +1,62 @@
-import Foundation
 import SpriteKit
 
 public class CircleLayer {
+    private let gameData: GameData
     private let layerNumber: Int
     private var circlePieces: [CirclePiece]
-    private let numOfPieces: Int
-    private let degreeRange: Double
     
-    init(layerNumber: Int, circlePieces: [CirclePiece], numOfPieces: Int, degreeRange: Double) {
+    init(gameData: GameData, layerNumber: Int, circlePieces: [CirclePiece]) {
+        self.gameData = gameData
         self.layerNumber = layerNumber
         self.circlePieces = circlePieces
-        self.numOfPieces = numOfPieces
-        self.degreeRange = degreeRange
     }
     
-    public func getRotatedIndex() -> Double {
+    public func solve(duration: Double) {
+        for i in 0..<self.circlePieces.count {
+            self.circlePieces[i].solve(duration: duration)
+        }
+    }
+    
+    public func snap() {
+        for i in 0..<self.circlePieces.count {
+            self.circlePieces[i].snap()
+        }
+    }
+    
+    public func shuffle(rotationIndex: Int) {
+        let angle = CGFloat(rotationIndex) * self.gameData.radianRange
+        for i in 0..<self.circlePieces.count {
+            self.circlePieces[i].shuffle(angle: angle, duration: Double(rotationIndex) * 0.2)
+        }
+    }
+    
+    public func rotate(angle: CGFloat) {
+        let convertedAngle = self.convertAngleForRotation(angle)
+        for i in 0..<self.circlePieces.count {
+            self.circlePieces[i].rotate(angle: convertedAngle)
+        }
+    }
+    
+    public func getRotationIndex() -> Int {
         if circlePieces.count > 0 {
-            return circlePieces[0].getRotatedIndex()
+            return circlePieces[0].getRotationIndex()
         }
         return -1
-    }
-    
-    public func getDegPos() -> CGFloat {
-        guard let rootCirclePiece = self.circlePieces[0].getCircleArc() else {
-            return -1
-        }
-        return rootCirclePiece.zRotation
     }
     
     public func getPiece(_ index: Int) -> CirclePiece {
         return self.circlePieces[index]
     }
     
-    public func shuffle() {
-        let turn = Int.random(in: 0..<self.numOfPieces)
-        let angle = CGFloat(Double(turn) * self.degreeRange.toRadians)
-        for i in 0..<self.circlePieces.count {
-            self.circlePieces[i].shuffle(angle: angle)
+    private func convertAngleForRotation(_ angle: CGFloat) -> CGFloat {
+        var convertedAngle: CGFloat = angle
+        if angle > CGFloat.pi || angle < (CGFloat.pi * -1) {
+            if angle > 0 {
+                convertedAngle = (GeometryData.fullRadianOfCircle - angle) * -1
+            } else {
+                convertedAngle = abs((GeometryData.fullRadianOfCircle * -1) - angle)
+            }
         }
-    }
-    
-    public func rotate(angle: CGFloat) {
-        for i in 0..<self.circlePieces.count {
-            self.circlePieces[i].rotate(angle: angle)
-        }
-    }
-    
-    public func snap(numOfPieces: CGFloat) {
-        for i in 0..<self.circlePieces.count {
-            self.circlePieces[i].snap(numOfPieces: numOfPieces)
-        }
+        return convertedAngle
     }
 }
