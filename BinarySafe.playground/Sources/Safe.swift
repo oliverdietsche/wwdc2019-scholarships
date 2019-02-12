@@ -41,8 +41,21 @@ public class Safe {
         }
     }
     
-    public func getCodeFromColumn() -> String {
-        return "110"
+    public func getCodeWithKeyFromColumn(_ column: Int) -> String {
+        var code = ""
+        for iLayer in (0..<self.gameData.layers).reversed() {
+            var pieceIndex = self.gameData.pieces - layers[iLayer].getRotationIndex()
+            if pieceIndex == self.gameData.pieces {
+                pieceIndex = 0
+            }
+            pieceIndex = (pieceIndex + column) % self.gameData.pieces
+            
+            code += layers[iLayer].getPiece(pieceIndex).getText()
+        }
+        guard let calculatedKey = Int(code, radix: 2) else {
+            return ""
+        }
+        return "\(code) = \(calculatedKey)"
     }
     
     public func isSolved() -> Bool {
@@ -81,10 +94,10 @@ public class Safe {
     
     public func shuffle() {
         var lastRotationIndex = 0
-        var rotationIndex = Int.random(in: self.gameData.pieces..<(self.gameData.pieces * 3))
+        var rotationIndex = Int.random(in: self.gameData.pieces..<(self.gameData.pieces * 2))
         for i in 0..<self.layers.count {
             while rotationIndex == lastRotationIndex {
-                rotationIndex = Int.random(in: self.gameData.pieces..<(self.gameData.pieces * 4))
+                rotationIndex = Int.random(in: self.gameData.pieces..<(self.gameData.pieces * 2))
             }
             lastRotationIndex = rotationIndex
             self.layers[i].shuffle(rotationIndex: rotationIndex)

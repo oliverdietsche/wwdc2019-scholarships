@@ -1,9 +1,9 @@
 import SpriteKit
 
-public struct GameData {
-    public init(layers: Int, pieces: Int, borderColor: SKColor, fillColor: SKColor, centerColor: SKColor) {
-        self.width = Double(UIScreen.main.bounds.width)
-        self.height = Double(UIScreen.main.bounds.height)
+public struct GameData {    
+    public init(width: Double, height: Double, layers: Int, pieces: Int, borderColor: SKColor, fillColor: SKColor, centerColor: SKColor) {
+        self.width = width
+        self.height = height
         self.center = CGPoint(x: self.width * 0.5, y: self.height * 0.5)
         
         self.layers = layers
@@ -34,7 +34,7 @@ public struct GameData {
     
     public var degreeRange: Double {
         get {
-            return Double(GeometryData.fullDegreeOfCircle / self.pieces)
+            return GeometryData.fullDegreeOfCircle / Double(self.pieces)
         }
     }
     public var radianRange: CGFloat {

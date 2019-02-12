@@ -9,8 +9,7 @@ public class MenuScene: SKScene {
     var pieces_label: UILabel?
     
     required init?(coder aDecoder: NSCoder) {
-        self.gameData = GameData(layers: 0, pieces: 0, borderColor: .red, fillColor: .red, centerColor: .red)
-        super.init(coder: aDecoder)
+        fatalError("NSCoding not supported")
     }
     
     public init(_ gameData: GameData) {
@@ -66,9 +65,6 @@ public class MenuScene: SKScene {
         
         start_button.addTarget(self, action: #selector(startGame(_:)), for: .touchUpInside)
         
-        guard let view = self.view else {
-            return
-        }
         view.addSubview(layers_slider)
         view.addSubview(layers_label)
         view.addSubview(pieces_slider)

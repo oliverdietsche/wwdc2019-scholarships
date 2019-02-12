@@ -3,13 +3,15 @@ import SpriteKit
 import Foundation
 
 public class GameScene: SKScene {
-    let borderColor: SKColor = .black
-    let centerColor: SKColor = .gray
     let lineWidth: CGFloat = 3
     
     private let gameData: GameData
     private var innerCircle: SKShapeNode
+    private var helpDescription_label: SKLabelNode
+    private var help_label: SKLabelNode
+    private var moves_label: SKLabelNode
     private var moves: Int
+    private var solved: Bool
     
     private var safe: Safe?
     private var activeLayer: CircleLayer?
@@ -17,42 +19,91 @@ public class GameScene: SKScene {
     private var p1 = CGPoint()
     private var p2 = CGPoint()
     
-    required init?(coder aDecoder: NSCoder) {
-        self.gameData = GameData(layers: 0, pieces: 0, borderColor: .red, fillColor: .red, centerColor: .red)
-        self.innerCircle = SKShapeNode()
-        self.moves = 0
-        
-        super.init(coder: aDecoder)
+    public required init?(coder aDecoder: NSCoder) {
+        fatalError("NSCoding not supported")
     }
     
     public init(_ gameData: GameData) {
         self.gameData = gameData
         self.innerCircle = SKShapeNode(circleOfRadius: CGFloat(gameData.innerRadius))
+        self.helpDescription_label = SKLabelNode(fontNamed: "Arial")
+        self.help_label = SKLabelNode(fontNamed: "Arial")
+        self.moves_label = SKLabelNode(fontNamed: "Arial")
         self.moves = 0
+        self.solved = false
         
         super.init(size: CGSize(width: gameData.width, height: gameData.height))
     }
     
     public override func didMove(to view: SKView) {
-        let home_button = self.newButton(text: "🏠", x: self.gameData.width / 2 - 125, y: 10)
-        home_button.addTarget(self, action: #selector(loadHomeScene(_:)), for: .touchUpInside)
-        let refresh_button = self.newButton(text: "↺", x: self.gameData.width / 2 - 35, y: 10)
-        refresh_button.addTarget(self, action: #selector(shuffleLayers(_:)), for: .touchUpInside)
-        let solve_button = self.newButton(text: "✔️", x: self.gameData.width / 2 + 55, y: 10)
-        solve_button.addTarget(self, action: #selector(solve(_:)), for: .touchUpInside)
-        guard let view = self.view else {
-            return
-        }
-        view.addSubview(home_button)
-        view.addSubview(refresh_button)
-        view.addSubview(solve_button)
+        let home_uibutton = self.newUIButton(text: "🏠", x: Double(self.gameData.center.x) - 40, y: self.gameData.height - 90)
+        home_uibutton.addTarget(self, action: #selector(self.loadHomeScene), for: .touchUpInside)
+        let refresh_uibutton = self.newUIButton(text: "↺", x: 10, y: self.gameData.height - 90)
+        refresh_uibutton.addTarget(self, action: #selector(self.shuffleLayers), for: .touchUpInside)
+        let solve_uibutton = self.newUIButton(text: "✔️", x: self.gameData.width - 90, y: self.gameData.height - 90)
+        solve_uibutton.addTarget(self, action: #selector(self.solve), for: .touchUpInside)
         
-        self.innerCircle.lineWidth = self.lineWidth
+        view.addSubview(home_uibutton)
+        view.addSubview(refresh_uibutton)
+        view.addSubview(solve_uibutton)
+        
+//        let home_texture = SKTexture(imageNamed: "home")
+//        let home_selectedTexture = SKTexture(imageNamed: "home_selected")
+//        let home_button = Button(normalTexture: home_texture, selectedTexture: home_selectedTexture, disabledTexture: nil)
+//        home_button.size = CGSize(width: 50, height: 50)
+//        home_button.position = CGPoint(x: Double(self.gameData.center.x), y: 35)
+//        home_button.setButtonAction(target: self, triggerEvent: .TouchUpInside, action: #selector(self.loadHomeScene))
+//        self.addChild(home_button)
+//
+//        let solve_normalTexture = SKTexture(imageNamed: "solve")
+//        let solve_selectedTexture = SKTexture(imageNamed: "solve_selected")
+//        let solve_button = Button(normalTexture: solve_normalTexture, selectedTexture: solve_selectedTexture, disabledTexture: nil)
+//        solve_button.size = CGSize(width: 50, height: 50)
+//        solve_button.position = CGPoint(x: self.gameData.width - 60, y: 35)
+//        solve_button.setButtonAction(target: self, triggerEvent: .TouchUpInside, action: #selector(self.solve))
+//        self.addChild(solve_button)
+        
+//        self.helpDescription_label.position = CGPoint(x: 10, y: self.gameData.height - 70)
+//        self.helpDescription_label.zPosition = 50
+//        self.helpDescription_label.fontSize = 20
+//        self.helpDescription_label.fontColor = .black
+//        var helpNum = pow(2, Double(self.gameData.layers - 1))
+//        var helpDescription = ""
+//        print(helpNum)
+//        for _ in 0..<self.gameData.layers {
+//            helpDescription += " \(Int(helpNum))"
+//            helpNum *= 0.5
+//        }
+//        self.helpDescription_label.text = helpDescription
+//        self.helpDescription_label.horizontalAlignmentMode = .left
+//        self.helpDescription_label.verticalAlignmentMode = .bottom
+//        self.addChild(self.helpDescription_label)
+        
+        self.help_label.position = CGPoint(x: 10, y: self.gameData.height - 100)
+        self.help_label.zPosition = 50
+        self.help_label.fontSize = 30
+        self.help_label.fontColor = .black
+        self.help_label.text = "101 = 5"
+        self.help_label.horizontalAlignmentMode = .left
+        self.help_label.verticalAlignmentMode = .bottom
+        self.addChild(self.help_label)
+        
+        self.moves_label.position = CGPoint(x: 10, y: self.gameData.height - 30)
+        self.moves_label.zPosition = 50
+        self.moves_label.fontSize = 20
+        self.moves_label.fontColor = .black
+        self.moves_label.text = "Moves:\(self.moves)"
+        self.moves_label.horizontalAlignmentMode = .left
+        self.moves_label.verticalAlignmentMode = .bottom
+        self.addChild(self.moves_label)
+        
         self.innerCircle.position = self.gameData.center
-        self.innerCircle.strokeColor = self.borderColor
-        self.innerCircle.fillColor = self.centerColor
         self.innerCircle.zPosition = 50
+        self.innerCircle.lineWidth = self.lineWidth
+        self.innerCircle.strokeColor = self.gameData.borderColor
+        self.innerCircle.fillColor = self.gameData.centerColor
         self.addChild(self.innerCircle)
+        
         self.backgroundColor = .white
         
         var layers = [CircleLayer]()
@@ -90,6 +141,9 @@ public class GameScene: SKScene {
     }
     
     func touchDown(atPoint pos : CGPoint) {
+        if solved {
+            return
+        }
         let radius = Double(distanceBetweenCGPoints(from: self.gameData.center, to: pos))
         let calculatedLayer = Int(radius / self.gameData.innerRadius) - self.gameData.layers
         
@@ -97,11 +151,15 @@ public class GameScene: SKScene {
             return
         }
         self.activeLayer = safe.getLayer(self.convertCalculatedLayer(calculatedLayer))
+        print(safe.getCodeWithKeyFromColumn(0))
         
         self.p1 = pos
     }
     
     func touchMoved(toPoint pos : CGPoint) {
+        if solved {
+            return
+        }
         self.p2 = pos
         
         guard let activeLayer = self.activeLayer else {
@@ -113,23 +171,32 @@ public class GameScene: SKScene {
     }
     
     func touchUp(atPoint pos : CGPoint) {
+        if solved {
+            return
+        }
         guard let activeLayer = self.activeLayer else {
             return
         }
         activeLayer.snap()
         self.moves += 1
+        self.moves_label.text = "Moves:\(self.moves)"
         
         guard let safe = self.safe, safe.isSolved() else {
             return
         }
+        self.solved = true
         
-        self.isUserInteractionEnabled = false
-        self.innerCircle.fillColor = .green
+        guard let particles = SKEmitterNode(fileNamed: "MyParticle") else {
+            return
+        }
+        particles.position = self.gameData.center
+        particles.targetNode = self.scene
+        self.addChild(particles)
     }
     
     // MARK: private
     
-    private func newButton(text: String, x: Double, y: Double) -> UIButton {
+    private func newUIButton(text: String, x: Double, y: Double) -> UIButton {
         let home_button = UIButton(frame: CGRect(x: x, y: y, width: 80, height: 80))
         home_button.setTitle(text, for: .normal)
         home_button.titleLabel?.font = .systemFont(ofSize: 70)
@@ -161,7 +228,7 @@ public class GameScene: SKScene {
         return (from.x - to.x) * (from.x - to.x) + (from.y - to.y) * (from.y - to.y)
     }
     
-    @objc func loadHomeScene(_ sender: UIButton) {
+    @objc func loadHomeScene() {
         guard let view = self.view else {
             return
         }
@@ -169,25 +236,31 @@ public class GameScene: SKScene {
         view.presentScene(self.gameData.newMenuScene(), transition: SKTransition.crossFade(withDuration: 1))
     }
     
-    @objc func shuffleLayers(_ sender: UIButton) {
+    @objc func shuffleLayers() {
         guard let safe = self.safe else {
             return
         }
+        
+        self.moves = 0
+        self.moves_label.text = "Moves: \(self.moves)"
+        
         // Make sure the shuffle don't solve it
         safe.solve(duration: 0)
         
-        self.innerCircle.fillColor = self.centerColor
+        self.innerCircle.fillColor = self.gameData.centerColor
         safe.shuffle()
-        self.isUserInteractionEnabled = true
+        self.solved = false
     }
     
-    @objc func solve(_ sender: UIButton) {
+    @objc func solve() {
+        if solved {
+            return
+        }
         guard let safe = self.safe else {
             return
         }
-        self.isUserInteractionEnabled = false
+        self.solved = true
         safe.solve(duration: 1.5)
-        self.innerCircle.fillColor = .green
     }
 }
 

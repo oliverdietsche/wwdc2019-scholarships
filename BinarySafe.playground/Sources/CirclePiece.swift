@@ -5,8 +5,8 @@ public class CirclePiece {
     private let gameData: GameData
     private let layerNumber: Double
     private var rotationIndex: Int
-    private var circleArc: SKShapeNode?
-    private var label: SKLabelNode?
+    private var circleArc: SKShapeNode!
+    private var label: SKLabelNode!
     
     public init(gameData: GameData, layer layerNumber: Double, startDegree: Double, endDegree: Double) {
         self.gameData = gameData
@@ -20,39 +20,23 @@ public class CirclePiece {
         
         let lb_angle = startDegree.toRadians
         self.label = createLabel(angle: lb_angle)
-        
-        guard let circleArc = self.circleArc else {
-            return
-        }
-        guard let label = self.label else {
-            return
-        }
-        circleArc.addChild(label)
+        self.circleArc.addChild(self.label)
     }
     
     public func solve(duration: Double) {
-        guard let circleArc = self.circleArc else {
-            return
-        }
         self.abortAllActions()
-        self.doRotateAction(angle: self.getConvertedZRotation(shapeNode: circleArc) * -1, duration: duration)
-        self.rotationIndex = self.calculateRotationIndex(zRotation: circleArc.zRotation)
+        self.doRotateAction(angle: self.getConvertedZRotation(shapeNode: self.circleArc) * -1, duration: duration)
+        self.rotationIndex = self.calculateRotationIndex(zRotation: self.circleArc.zRotation)
     }
     
     public func snap() {
-        guard let circleArc = self.circleArc else {
-            return
-        }
-        guard let label = self.label else {
-            return
-        }
         self.abortAllActions()
         
-        let convertedZRotation = self.getConvertedZRotation(shapeNode: circleArc)
+        let convertedZRotation = self.getConvertedZRotation(shapeNode: self.circleArc)
         self.rotationIndex = self.calculateRotationIndex(zRotation: convertedZRotation)
         
-        circleArc.zRotation = self.gameData.radianRange * CGFloat(self.rotationIndex)
-        label.zRotation = self.gameData.radianRange * CGFloat(self.rotationIndex) * -1
+        self.circleArc.zRotation = self.gameData.radianRange * CGFloat(self.rotationIndex)
+        self.label.zRotation = self.gameData.radianRange * CGFloat(self.rotationIndex) * -1
     }
     
     public func shuffle(angle: CGFloat, duration: Double) {
@@ -73,17 +57,11 @@ public class CirclePiece {
     }
     
     public func setText(_ text: String) {
-        guard let label = self.label else {
-            return
-        }
-        label.text = text
+        self.label.text = text
     }
     
     public func getText() -> String {
-        guard let label = self.label else {
-            return ""
-        }
-        guard let text = label.text else {
+        guard let text = self.label.text else {
             return ""
         }
         return text
@@ -92,14 +70,8 @@ public class CirclePiece {
     // MARK: private
     
     private func abortAllActions() {
-        guard let circleArc = self.circleArc else {
-            return
-        }
-        guard let label = self.label else {
-            return
-        }
-        circleArc.removeAllActions()
-        label.removeAllActions()
+        self.circleArc.removeAllActions()
+        self.label.removeAllActions()
     }
     
     // Returns zRotation of a SKShapeNode with a value between 0 and 6.2831853
@@ -125,20 +97,14 @@ public class CirclePiece {
     }
     
     private func doRotateAction(angle: CGFloat, duration: Double) {
-        guard let circleArc = self.circleArc else {
-            return
-        }
         let rotateAction = SKAction.rotate(byAngle: angle, duration: duration)
-        circleArc.run(rotateAction) {
+        self.circleArc.run(rotateAction) {
             // Wait for the rotation to end, before calculating the rotationIndex
-            self.rotationIndex = self.calculateRotationIndex(zRotation: self.getConvertedZRotation(shapeNode: circleArc))
+            self.rotationIndex = self.calculateRotationIndex(zRotation: self.getConvertedZRotation(shapeNode: self.circleArc))
         }
         
-        guard let label = self.label else {
-            return
-        }
         let antiRotateAction = SKAction.rotate(byAngle: angle * -1, duration: duration)
-        label.run(antiRotateAction)
+        self.label.run(antiRotateAction)
     }
     
     private func createCircleArc(startAngle: CGFloat, endAngle: CGFloat, radius: CGFloat) -> SKShapeNode {
@@ -158,7 +124,7 @@ public class CirclePiece {
     
     private func createLabel(angle: Double) -> SKLabelNode {
         let shiftedAngle = angle + self.gameData.degreeRange.toRadians * 0.5
-        let radius = self.gameData.innerRadius * (self.layerNumber + 0.5)
+        let radius = self.gameData.innerRadius * (self.layerNumber + 0.55)
         
         let xCord = cos(shiftedAngle) * radius
         let yCord = sin(shiftedAngle) * radius
