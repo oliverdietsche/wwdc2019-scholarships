@@ -10,18 +10,6 @@ public struct GameData {
         self.pieces = pieces
     }
     
-    public func newInitialScene() -> InitialScene {
-        return InitialScene(self)
-    }
-    
-    public func newMenuScene() -> MenuScene {
-        return MenuScene(self)
-    }
-    
-    public func newGameScene() -> GameScene {
-        return GameScene(self)
-    }
-    
     public let borderColor: SKColor = UIColor.black
     public let fillColor: SKColor = UIColor.lightGray
     public let centerColor: SKColor = UIColor.gray

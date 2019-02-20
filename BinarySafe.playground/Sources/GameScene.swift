@@ -102,7 +102,7 @@ public class GameScene: SKScene {
     
     private func setupLabel(label: SKLabelNode, position: CGPoint, fontSize: CGFloat, text: String, hAlignment: SKLabelHorizontalAlignmentMode) {
         label.position = position
-        label.zPosition = 50
+        label.zPosition = 1
         label.fontSize = fontSize
         label.fontColor = .black
         label.text = text
@@ -113,7 +113,7 @@ public class GameScene: SKScene {
     
     private func setupInnerCircle() {
         self.innerCircle.position = self.gameData.center
-        self.innerCircle.zPosition = 50
+        self.innerCircle.zPosition = 1
         self.innerCircle.lineWidth = self.lineWidth
         self.innerCircle.strokeColor = self.gameData.borderColor
         self.innerCircle.fillColor = self.gameData.centerColor
@@ -217,6 +217,9 @@ public class GameScene: SKScene {
 }
 
 extension GameScene: SKButtonDelegate {
+    public func loadGameScene() {
+        fatalError("Not supported in GameScene")
+    }
     
     public func shuffleLayers() {
         guard let safe = self.safe else {
@@ -239,7 +242,7 @@ extension GameScene: SKButtonDelegate {
             return
         }
         view.subviews.forEach({ $0.removeFromSuperview() })
-        view.presentScene(self.gameData.newInitialScene(), transition: SKTransition.crossFade(withDuration: 1))
+        view.presentScene(MenuScene(self.gameData), transition: SKTransition.crossFade(withDuration: 1))
     }
     
     public func solveLayers() {

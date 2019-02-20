@@ -1,30 +1,33 @@
 import SpriteKit
 
-protocol SKButtonDelegate {
-    func loadGameScene()
-    func shuffleLayers()
-    func loadHomeScene()
-    func solveLayers()
+protocol HelpButtonDelegate {
+    func displayHelp(column: Int)
 }
 
-class SKButton: SKSpriteNode {
-    enum ButtonType {
-        case play, shuffle, home, solve
-    }
-    public var delegate: SKButtonDelegate?
+class HelpButton: SKSpriteNode {
+    public var delegate: HelpButtonDelegate?
+    private let column: Int
     private var isSelected: Bool
-    private let type: ButtonType
     
     required init(coder: NSCoder) {
         fatalError("NSCoding not supported")
     }
     
-    init(size: CGSize, type: ButtonType, texture: SKTexture) {
-        self.type = type
+    init(size: CGSize, text: String, column: Int) {
+        self.column = column
         self.isSelected = false
         
-        super.init(texture: texture, color: SKColor.blue, size: size)
+        super.init(texture: nil, color: SKColor.blue, size: size)
         
+        let label = SKLabelNode(fontNamed: "Arial")
+        label.horizontalAlignmentMode = .center
+        label.verticalAlignmentMode = .center
+        label.fontSize = size.width * 0.7
+        label.fontColor = UIColor.black
+        label.text = text
+        self.addChild(label)
+        
+        self.color = .white
         self.isUserInteractionEnabled = true
         self.zPosition = 1
     }
@@ -61,16 +64,7 @@ class SKButton: SKSpriteNode {
                 return
             }
             
-            switch self.type {
-            case .play:
-                delegate.loadGameScene()
-            case .shuffle:
-                delegate.shuffleLayers()
-            case .home:
-                delegate.loadHomeScene()
-            case .solve:
-                delegate.solveLayers()
-            }
+            delegate.displayHelp(column: column)
         }
     }
 }

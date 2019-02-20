@@ -20,11 +20,18 @@ public class MenuScene: SKScene {
     public override func didMove(to view: SKView) {
         self.backgroundColor = .white
         
-        let itemSize = CGSize(width: self.gameData.width * 0.4, height: 40)
-        let layers_labelFrame = CGRect(origin: CGPoint(x: self.gameData.width * 0.3, y: 40), size: itemSize)
-        let layers_sliderFrame = CGRect(origin: CGPoint(x: self.gameData.width * 0.3, y: 70), size: itemSize)
-        let pieces_labelFrame = CGRect(origin: CGPoint(x: self.gameData.width * 0.3, y: 140), size: itemSize)
-        let pieces_sliderFrame = CGRect(origin: CGPoint(x: self.gameData.width * 0.3, y: 170), size: itemSize)
+        let titleSize = CGSize(width: view.frame.width * 0.6, height: 80)
+        let itemSize = CGSize(width: view.frame.width * 0.4, height: 40)
+        let title_labelFrame = CGRect(origin: CGPoint(x: view.frame.width * 0.2, y: 40), size: titleSize)
+        let layers_labelFrame = CGRect(origin: CGPoint(x: view.frame.width * 0.3, y: 140), size: itemSize)
+        let layers_sliderFrame = CGRect(origin: CGPoint(x: view.frame.width * 0.3, y: 170), size: itemSize)
+        let pieces_labelFrame = CGRect(origin: CGPoint(x: view.frame.width * 0.3, y: 240), size: itemSize)
+        let pieces_sliderFrame = CGRect(origin: CGPoint(x: view.frame.width * 0.3, y: 270), size: itemSize)
+        
+        let title_label = UILabel(frame: title_labelFrame)
+        title_label.font = UIFont(name: "Noteworthy-Bold", size: 40)
+        title_label.textAlignment = .center
+        title_label.text = "BinarySafe"
         
         self.layers_label = UILabel(frame: layers_labelFrame)
         guard let layers_label = self.layers_label else {
@@ -52,7 +59,7 @@ public class MenuScene: SKScene {
         pieces_slider.setValue(Float(self.gameData.pieces), animated: false)
         pieces_slider.addTarget(self, action: #selector(changePiecesValue(_:)), for: .valueChanged)
         
-        let start_button = UIButton(frame: CGRect(x: self.gameData.width * 0.3, y: 240, width: self.gameData.width * 0.4, height: 40))
+        let start_button = UIButton(frame: CGRect(x: view.frame.width * 0.3, y: 340, width: view.frame.width * 0.4, height: 40))
         
         start_button.setTitle("Start", for: .normal)
         start_button.setTitleColor(UIColor.black, for: .normal)
@@ -65,6 +72,7 @@ public class MenuScene: SKScene {
         
         start_button.addTarget(self, action: #selector(startGame(_:)), for: .touchUpInside)
         
+        view.addSubview(title_label)
         view.addSubview(layers_slider)
         view.addSubview(layers_label)
         view.addSubview(pieces_slider)
@@ -73,27 +81,26 @@ public class MenuScene: SKScene {
     }
     
     @objc func changeLayersValue(_ sender: UISlider) {
-        self.gameData.layers = Int(sender.value)
         guard let layers_label = self.layers_label else {
             return
         }
+        self.gameData.layers = Int(sender.value)
         layers_label.text = "Layers: \(self.gameData.layers)"
     }
     
     @objc func changePiecesValue(_ sender: UISlider) {
-        self.gameData.pieces = Int(sender.value)
         guard let pieces_label = self.pieces_label else {
             return
         }
+        self.gameData.pieces = Int(sender.value)
         pieces_label.text = "Pieces: \(self.gameData.pieces)"
     }
     
     @objc func startGame(_ sender: UIButton) {
-        let newScene = GameScene(gameData)
         guard let view = self.view else {
             return
         }
         view.subviews.forEach({ $0.removeFromSuperview() })
-        view.presentScene(newScene, transition: SKTransition.fade(with: UIColor.black, duration: 0.8))
+        view.presentScene(GameScene(self.gameData), transition: SKTransition.crossFade(withDuration: 1))
     }
 }
