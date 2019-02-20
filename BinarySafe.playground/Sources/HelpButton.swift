@@ -13,7 +13,7 @@ class HelpButton: SKSpriteNode {
         fatalError("NSCoding not supported")
     }
     
-    init(size: CGSize, text: String, column: Int) {
+    init(size: CGSize, text: String, column: Int, degree: Double) {
         self.column = column
         self.isSelected = false
         
@@ -22,12 +22,16 @@ class HelpButton: SKSpriteNode {
         let label = SKLabelNode(fontNamed: "Arial")
         label.horizontalAlignmentMode = .center
         label.verticalAlignmentMode = .center
-        label.fontSize = size.width * 0.7
+        label.fontSize = size.width
         label.fontColor = UIColor.black
         label.text = text
         self.addChild(label)
         
-        self.color = .white
+        if 90 < degree && degree < 270 {
+            label.horizontalAlignmentMode = .right
+        }
+        
+        self.color = .clear
         self.isUserInteractionEnabled = true
         self.zPosition = 1
     }

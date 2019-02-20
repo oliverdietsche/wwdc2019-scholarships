@@ -35,6 +35,48 @@ public class GameScene: SKScene {
     
     public override func didMove(to view: SKView) {
         self.setup()
+        
+        guard let safe = self.safe else {
+            return
+        }
+        
+        let maxPossibleValue = Int(pow(2, Double(self.gameData.layers)))
+        
+        var code = [Int]()
+        var startDegree: Double = 0
+        for iPiece in 0..<self.gameData.pieces {
+            let codeNumber: Int = Int.random(in: 0..<maxPossibleValue)
+            let codeArray = self.intToBinaryCharArray(int: codeNumber, amountOfChars: self.gameData.layers)
+            code.append(codeNumber)
+            
+            let shiftedAngle = startDegree.toRadians + Double(self.gameData.radianRange) * 0.5
+            let radius = self.gameData.innerRadius * (Double(self.gameData.layers) + 1.5)
+            let xCord = cos(shiftedAngle) * radius
+            let yCord = sin(shiftedAngle) * radius
+            let position = CGPoint(x: CGFloat(xCord) + self.gameData.center.x, y: CGFloat(yCord) + self.gameData.center.y)
+            
+            let size = sqrt(self.gameData.innerRadius * self.gameData.innerRadius * 0.5)
+            let helpButton = HelpButton(size: CGSize(width: size, height: size), text: String(codeNumber), column: iPiece, degree: shiftedAngle.toDegrees)
+            helpButton.delegate = self
+            helpButton.position = position
+            self.addChild(helpButton)
+            
+            var codeIndex = 0
+            for iLayer in (0..<self.gameData.layers).reversed() {
+                safe.getLayer(iLayer).getPiece(iPiece).setText(String(codeArray[codeIndex]))
+                codeIndex += 1
+            }
+            startDegree += self.gameData.degreeRange
+        }
+        safe.setCode(code)
+    }
+    
+    private func intToBinaryCharArray(int: Int, amountOfChars: Int) -> [Character] {
+        var result = String(int, radix: 2)
+        while result.count < amountOfChars {
+            result = "0" + result
+        }
+        return Array(result)
     }
     
     func touchDown(atPoint pos : CGPoint) {
@@ -74,7 +116,6 @@ public class GameScene: SKScene {
         
         self.moves += 1
         self.movesLabel.text = "Moves:\(self.moves)"
-        self.helpLabel.text = safe.getCodeWithKeyFromColumn(0)
         
         if safe.isSolved() {
             self.solved = true
@@ -162,11 +203,6 @@ public class GameScene: SKScene {
         }
         
         let safe = Safe(gameData: self.gameData, layers: layers)
-        
-        let codeLabels = safe.getCodeLabels()
-        for i in 0..<codeLabels.count {
-            self.addChild(codeLabels[i])
-        }
         safe.shuffle()
         
         self.safe = safe
@@ -216,7 +252,14 @@ public class GameScene: SKScene {
     }
 }
 
-extension GameScene: SKButtonDelegate {
+extension GameScene: SKButtonDelegate, HelpButtonDelegate {
+    public func displayHelp(column: Int) {
+        guard let safe = self.safe else {
+            return
+        }
+        self.helpLabel.text = safe.getCodeWithKeyFromColumn(column)
+    }
+    
     public func loadGameScene() {
         fatalError("Not supported in GameScene")
     }

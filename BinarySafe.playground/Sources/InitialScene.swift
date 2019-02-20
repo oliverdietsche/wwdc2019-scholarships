@@ -18,7 +18,7 @@ public class InitialScene: SKScene {
     public override func didMove(to view: SKView) {
         self.backgroundColor = .white
         
-        let helpButton = HelpButton(size: CGSize(width: 40, height: 40), text: "001", column: 0)
+        let helpButton = HelpButton(size: CGSize(width: 40, height: 40), text: "001", column: 0, degree: 0)
         helpButton.delegate = self
         helpButton.position = CGPoint(x: self.gameData.center.x, y: self.gameData.center.y + 100)
         self.addChild(helpButton)
