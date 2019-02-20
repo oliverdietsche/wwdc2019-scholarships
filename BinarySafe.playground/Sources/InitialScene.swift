@@ -20,13 +20,13 @@ public class InitialScene: SKScene {
     public override func didMove(to view: SKView) {
         self.backgroundColor = .white
         
-        let titleSize = CGSize(width: self.size.width * 0.6, height: 80)
-        let itemSize = CGSize(width: self.size.width * 0.4, height: 40)
-        let title_labelFrame = CGRect(origin: CGPoint(x: self.size.width * 0.2, y: 40), size: titleSize)
-        let layers_labelFrame = CGRect(origin: CGPoint(x: self.size.width * 0.3, y: 140), size: itemSize)
-        let layers_sliderFrame = CGRect(origin: CGPoint(x: self.size.width * 0.3, y: 170), size: itemSize)
-        let pieces_labelFrame = CGRect(origin: CGPoint(x: self.size.width * 0.3, y: 240), size: itemSize)
-        let pieces_sliderFrame = CGRect(origin: CGPoint(x: self.size.width * 0.3, y: 270), size: itemSize)
+        let titleSize = CGSize(width: view.frame.width * 0.6, height: 80)
+        let itemSize = CGSize(width: view.frame.width * 0.4, height: 40)
+        let title_labelFrame = CGRect(origin: CGPoint(x: view.frame.width * 0.2, y: 40), size: titleSize)
+        let layers_labelFrame = CGRect(origin: CGPoint(x: view.frame.width * 0.3, y: 140), size: itemSize)
+        let layers_sliderFrame = CGRect(origin: CGPoint(x: view.frame.width * 0.3, y: 170), size: itemSize)
+        let pieces_labelFrame = CGRect(origin: CGPoint(x: view.frame.width * 0.3, y: 240), size: itemSize)
+        let pieces_sliderFrame = CGRect(origin: CGPoint(x: view.frame.width * 0.3, y: 270), size: itemSize)
         
         let title_label = UILabel(frame: title_labelFrame)
         title_label.font = UIFont(name: "Noteworthy-Bold", size: 40)

@@ -7,9 +7,8 @@ public class GameScene: SKScene {
     
     private let gameData: GameData
     private var innerCircle: SKShapeNode
-    private var helpDescription_label: SKLabelNode
-    private var help_label: SKLabelNode
-    private var moves_label: SKLabelNode
+    private var helpLabel: SKLabelNode
+    private var movesLabel: SKLabelNode
     private var moves: Int
     private var solved: Bool
     
@@ -26,9 +25,8 @@ public class GameScene: SKScene {
     public init(_ gameData: GameData) {
         self.gameData = gameData
         self.innerCircle = SKShapeNode(circleOfRadius: CGFloat(gameData.innerRadius))
-        self.helpDescription_label = SKLabelNode(fontNamed: "Arial")
-        self.help_label = SKLabelNode(fontNamed: "Arial")
-        self.moves_label = SKLabelNode(fontNamed: "Arial")
+        self.helpLabel = SKLabelNode(fontNamed: "Arial")
+        self.movesLabel = SKLabelNode(fontNamed: "Arial")
         self.moves = 0
         self.solved = false
         
@@ -36,76 +34,110 @@ public class GameScene: SKScene {
     }
     
     public override func didMove(to view: SKView) {
-        let home_uibutton = self.newUIButton(text: "🏠", x: Double(self.gameData.center.x) - 40, y: self.gameData.height - 90)
-        home_uibutton.addTarget(self, action: #selector(self.loadHomeScene), for: .touchUpInside)
-        let refresh_uibutton = self.newUIButton(text: "↺", x: 10, y: self.gameData.height - 90)
-        refresh_uibutton.addTarget(self, action: #selector(self.shuffleLayers), for: .touchUpInside)
-        let solve_uibutton = self.newUIButton(text: "✔️", x: self.gameData.width - 90, y: self.gameData.height - 90)
-        solve_uibutton.addTarget(self, action: #selector(self.solve), for: .touchUpInside)
+        self.setup()
+    }
+    
+    func touchDown(atPoint pos : CGPoint) {
+        if solved {
+            return
+        }
+        self.updateActiveLayer(touchedPos: pos)
         
-        view.addSubview(home_uibutton)
-        view.addSubview(refresh_uibutton)
-        view.addSubview(solve_uibutton)
+        self.p1 = pos
+    }
+    
+    func touchMoved(toPoint pos : CGPoint) {
+        if solved {
+            return
+        }
+        self.p2 = pos
         
-//        let home_texture = SKTexture(imageNamed: "home")
-//        let home_selectedTexture = SKTexture(imageNamed: "home_selected")
-//        let home_button = Button(normalTexture: home_texture, selectedTexture: home_selectedTexture, disabledTexture: nil)
-//        home_button.size = CGSize(width: 50, height: 50)
-//        home_button.position = CGPoint(x: Double(self.gameData.center.x), y: 35)
-//        home_button.setButtonAction(target: self, triggerEvent: .TouchUpInside, action: #selector(self.loadHomeScene))
-//        self.addChild(home_button)
-//
-//        let solve_normalTexture = SKTexture(imageNamed: "solve")
-//        let solve_selectedTexture = SKTexture(imageNamed: "solve_selected")
-//        let solve_button = Button(normalTexture: solve_normalTexture, selectedTexture: solve_selectedTexture, disabledTexture: nil)
-//        solve_button.size = CGSize(width: 50, height: 50)
-//        solve_button.position = CGPoint(x: self.gameData.width - 60, y: 35)
-//        solve_button.setButtonAction(target: self, triggerEvent: .TouchUpInside, action: #selector(self.solve))
-//        self.addChild(solve_button)
+        guard let activeLayer = self.activeLayer else {
+            return
+        }
+        activeLayer.rotate(angle: self.calculateAngle(point1: self.p1, point2: self.p2))
         
-//        self.helpDescription_label.position = CGPoint(x: 10, y: self.gameData.height - 70)
-//        self.helpDescription_label.zPosition = 50
-//        self.helpDescription_label.fontSize = 20
-//        self.helpDescription_label.fontColor = .black
-//        var helpNum = pow(2, Double(self.gameData.layers - 1))
-//        var helpDescription = ""
-//        print(helpNum)
-//        for _ in 0..<self.gameData.layers {
-//            helpDescription += " \(Int(helpNum))"
-//            helpNum *= 0.5
-//        }
-//        self.helpDescription_label.text = helpDescription
-//        self.helpDescription_label.horizontalAlignmentMode = .left
-//        self.helpDescription_label.verticalAlignmentMode = .bottom
-//        self.addChild(self.helpDescription_label)
+        self.p1 = pos
+    }
+    
+    func touchUp(atPoint pos : CGPoint) {
+        if solved {
+            return
+        }
+        guard let safe = self.safe else {
+            return
+        }
+        guard let activeLayer = self.activeLayer else {
+            return
+        }
+        activeLayer.snap()
         
-        self.help_label.position = CGPoint(x: 10, y: self.gameData.height - 100)
-        self.help_label.zPosition = 50
-        self.help_label.fontSize = 30
-        self.help_label.fontColor = .black
-        self.help_label.text = "101 = 5"
-        self.help_label.horizontalAlignmentMode = .left
-        self.help_label.verticalAlignmentMode = .bottom
-        self.addChild(self.help_label)
+        self.moves += 1
+        self.movesLabel.text = "Moves:\(self.moves)"
+        self.helpLabel.text = safe.getCodeWithKeyFromColumn(0)
         
-        self.moves_label.position = CGPoint(x: 10, y: self.gameData.height - 30)
-        self.moves_label.zPosition = 50
-        self.moves_label.fontSize = 20
-        self.moves_label.fontColor = .black
-        self.moves_label.text = "Moves:\(self.moves)"
-        self.moves_label.horizontalAlignmentMode = .left
-        self.moves_label.verticalAlignmentMode = .bottom
-        self.addChild(self.moves_label)
+        if safe.isSolved() {
+            self.solved = true
+            self.spawnParticles(position: self.gameData.center)
+        }
+    }
+    
+    // MARK: private
+    
+    private func setup() {
+        self.backgroundColor = .white
         
+        let movesLabel_position = CGPoint(x: 10, y: self.gameData.height - 30)
+        self.setupLabel(label: self.movesLabel, position: movesLabel_position, fontSize: 20, text: "Moves:\(self.moves)", hAlignment: .left)
+        
+        let helpLabel_position = CGPoint(x: Double(self.gameData.center.x), y: self.gameData.height - 100)
+        self.setupLabel(label: self.helpLabel, position: helpLabel_position, fontSize: 30, text: "HelpLabel", hAlignment: .center)
+        
+        self.setupInnerCircle()
+        
+        self.setupButtons()
+        
+        self.setupSafe()
+    }
+    
+    private func setupLabel(label: SKLabelNode, position: CGPoint, fontSize: CGFloat, text: String, hAlignment: SKLabelHorizontalAlignmentMode) {
+        label.position = position
+        label.zPosition = 50
+        label.fontSize = fontSize
+        label.fontColor = .black
+        label.text = text
+        label.horizontalAlignmentMode = hAlignment
+        label.verticalAlignmentMode = .center
+        self.addChild(label)
+    }
+    
+    private func setupInnerCircle() {
         self.innerCircle.position = self.gameData.center
         self.innerCircle.zPosition = 50
         self.innerCircle.lineWidth = self.lineWidth
         self.innerCircle.strokeColor = self.gameData.borderColor
         self.innerCircle.fillColor = self.gameData.centerColor
         self.addChild(self.innerCircle)
+    }
+    
+    private func setupButtons() {
+        let shuffleButton = SKButton(size: CGSize(width: 60, height: 60), type: .shuffle, texture: SKTexture(imageNamed: "shuffle.png"))
+        shuffleButton.delegate = self
+        shuffleButton.position = CGPoint(x: 40, y: 40)
+        self.addChild(shuffleButton)
         
-        self.backgroundColor = .white
+        let homeButton = SKButton(size: CGSize(width: 60, height: 60), type: .home, texture: SKTexture(imageNamed: "home.png"))
+        homeButton.delegate = self
+        homeButton.position = CGPoint(x: self.gameData.center.x, y: 40)
+        self.addChild(homeButton)
         
+        let solveButton = SKButton(size: CGSize(width: 60, height: 60), type: .solve, texture: SKTexture(imageNamed: "solve.png"))
+        solveButton.delegate = self
+        solveButton.position = CGPoint(x: self.gameData.width - 40, y: 40)
+        self.addChild(solveButton)
+    }
+    
+    private func setupSafe() {
         var layers = [CircleLayer]()
         for iLayer in (1...self.gameData.layers).reversed() {
             var startDegree: Double = 0
@@ -140,10 +172,7 @@ public class GameScene: SKScene {
         self.safe = safe
     }
     
-    func touchDown(atPoint pos : CGPoint) {
-        if solved {
-            return
-        }
+    private func updateActiveLayer(touchedPos pos: CGPoint) {
         let radius = Double(distanceBetweenCGPoints(from: self.gameData.center, to: pos))
         let calculatedLayer = Int(radius / self.gameData.innerRadius) - self.gameData.layers
         
@@ -151,57 +180,15 @@ public class GameScene: SKScene {
             return
         }
         self.activeLayer = safe.getLayer(self.convertCalculatedLayer(calculatedLayer))
-        print(safe.getCodeWithKeyFromColumn(0))
-        
-        self.p1 = pos
     }
     
-    func touchMoved(toPoint pos : CGPoint) {
-        if solved {
-            return
-        }
-        self.p2 = pos
-        
-        guard let activeLayer = self.activeLayer else {
-            return
-        }
-        activeLayer.rotate(angle: self.calculateAngle(point1: self.p1, point2: self.p2))
-        
-        self.p1 = pos
-    }
-    
-    func touchUp(atPoint pos : CGPoint) {
-        if solved {
-            return
-        }
-        guard let activeLayer = self.activeLayer else {
-            return
-        }
-        activeLayer.snap()
-        self.moves += 1
-        self.moves_label.text = "Moves:\(self.moves)"
-        
-        guard let safe = self.safe, safe.isSolved() else {
-            return
-        }
-        self.solved = true
-        
+    private func spawnParticles(position: CGPoint) {
         guard let particles = SKEmitterNode(fileNamed: "MyParticle") else {
             return
         }
-        particles.position = self.gameData.center
+        particles.position = position
         particles.targetNode = self.scene
         self.addChild(particles)
-    }
-    
-    // MARK: private
-    
-    private func newUIButton(text: String, x: Double, y: Double) -> UIButton {
-        let home_button = UIButton(frame: CGRect(x: x, y: y, width: 80, height: 80))
-        home_button.setTitle(text, for: .normal)
-        home_button.titleLabel?.font = .systemFont(ofSize: 70)
-        home_button.setTitleColor(UIColor.black, for: .normal)
-        return home_button
     }
     
     private func calculateAngle(point1 p1: CGPoint, point2 p2: CGPoint) -> CGFloat {
@@ -227,22 +214,17 @@ public class GameScene: SKScene {
     private func distanceBetweenCGPointsSquared(from: CGPoint, to: CGPoint) -> CGFloat {
         return (from.x - to.x) * (from.x - to.x) + (from.y - to.y) * (from.y - to.y)
     }
+}
+
+extension GameScene: SKButtonDelegate {
     
-    @objc func loadHomeScene() {
-        guard let view = self.view else {
-            return
-        }
-        view.subviews.forEach({ $0.removeFromSuperview() })
-        view.presentScene(self.gameData.newMenuScene(), transition: SKTransition.crossFade(withDuration: 1))
-    }
-    
-    @objc func shuffleLayers() {
+    public func shuffleLayers() {
         guard let safe = self.safe else {
             return
         }
         
         self.moves = 0
-        self.moves_label.text = "Moves: \(self.moves)"
+        self.movesLabel.text = "Moves: \(self.moves)"
         
         // Make sure the shuffle don't solve it
         safe.solve(duration: 0)
@@ -252,7 +234,15 @@ public class GameScene: SKScene {
         self.solved = false
     }
     
-    @objc func solve() {
+    public func loadHomeScene() {
+        guard let view = self.view else {
+            return
+        }
+        view.subviews.forEach({ $0.removeFromSuperview() })
+        view.presentScene(self.gameData.newInitialScene(), transition: SKTransition.crossFade(withDuration: 1))
+    }
+    
+    public func solveLayers() {
         if solved {
             return
         }
@@ -260,6 +250,7 @@ public class GameScene: SKScene {
             return
         }
         self.solved = true
+        self.movesLabel.text = "Auto-Solved"
         safe.solve(duration: 1.5)
     }
 }

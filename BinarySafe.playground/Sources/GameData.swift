@@ -1,16 +1,17 @@
 import SpriteKit
 
 public struct GameData {    
-    public init(width: Double, height: Double, layers: Int, pieces: Int, borderColor: SKColor, fillColor: SKColor, centerColor: SKColor) {
+    public init(width: Double, height: Double, layers: Int, pieces: Int) {
         self.width = width
         self.height = height
         self.center = CGPoint(x: self.width * 0.5, y: self.height * 0.5)
         
         self.layers = layers
         self.pieces = pieces
-        self.borderColor = borderColor
-        self.fillColor = fillColor
-        self.centerColor = centerColor
+    }
+    
+    public func newInitialScene() -> InitialScene {
+        return InitialScene(self)
     }
     
     public func newMenuScene() -> MenuScene {
@@ -21,27 +22,35 @@ public struct GameData {
         return GameScene(self)
     }
     
+    public let borderColor: SKColor = UIColor.black
+    public let fillColor: SKColor = UIColor.lightGray
+    public let centerColor: SKColor = UIColor.gray
+    
     public let width: Double
     public let height: Double
     public let center: CGPoint
     
-    public let borderColor: SKColor
-    public let fillColor: SKColor
-    public let centerColor: SKColor
-    
     public var layers: Int
     public var pieces: Int
+    
+    public var frame: CGRect {
+        get {
+            return CGRect(x: 0, y: 0, width: self.width, height: self.height)
+        }
+    }
     
     public var degreeRange: Double {
         get {
             return GeometryData.fullDegreeOfCircle / Double(self.pieces)
         }
     }
+    
     public var radianRange: CGFloat {
         get {
             return CGFloat(GeometryData.fullRadianOfCircle / CGFloat(self.pieces))
         }
     }
+    
     public var innerRadius: Double {
         get {
             if width > height {
