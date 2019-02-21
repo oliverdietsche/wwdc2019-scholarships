@@ -12,6 +12,7 @@ public class GameScene: SKScene {
     private var moves: Int
     private var solved: Bool
     
+    private var helpColumn: Int?
     private var safe: Safe?
     private var activeLayer: CircleLayer?
     
@@ -116,6 +117,7 @@ public class GameScene: SKScene {
         
         self.moves += 1
         self.movesLabel.text = "Moves:\(self.moves)"
+        self.updateHelp()
         
         if safe.isSolved() {
             self.solved = true
@@ -162,17 +164,17 @@ public class GameScene: SKScene {
     }
     
     private func setupButtons() {
-        let shuffleButton = SKButton(size: CGSize(width: 60, height: 60), type: .shuffle, texture: SKTexture(imageNamed: "shuffle.png"))
+        let shuffleButton = GameControlButton(size: CGSize(width: 60, height: 60), type: .shuffle, texture: SKTexture(imageNamed: "shuffle2.png"))
         shuffleButton.delegate = self
         shuffleButton.position = CGPoint(x: 40, y: 40)
         self.addChild(shuffleButton)
         
-        let homeButton = SKButton(size: CGSize(width: 60, height: 60), type: .home, texture: SKTexture(imageNamed: "home.png"))
+        let homeButton = GameControlButton(size: CGSize(width: 60, height: 60), type: .home, texture: SKTexture(imageNamed: "home.png"))
         homeButton.delegate = self
         homeButton.position = CGPoint(x: self.gameData.center.x, y: 40)
         self.addChild(homeButton)
         
-        let solveButton = SKButton(size: CGSize(width: 60, height: 60), type: .solve, texture: SKTexture(imageNamed: "solve.png"))
+        let solveButton = GameControlButton(size: CGSize(width: 60, height: 60), type: .solve, texture: SKTexture(imageNamed: "solve.png"))
         solveButton.delegate = self
         solveButton.position = CGPoint(x: self.gameData.width - 40, y: 40)
         self.addChild(solveButton)
@@ -227,6 +229,18 @@ public class GameScene: SKScene {
         self.addChild(particles)
     }
     
+    private func updateHelp() {
+        guard let safe = self.safe else {
+            return
+        }
+        safe.resetFillColor()
+        self.helpLabel.text = "HelpLabel"
+        guard let column = self.helpColumn else {
+            return
+        }
+        self.helpLabel.text = safe.getCodeWithKeyFromColumn(column)
+    }
+    
     private func calculateAngle(point1 p1: CGPoint, point2 p2: CGPoint) -> CGFloat {
         let v1 = CGVector(dx: p1.x - self.gameData.center.x, dy: p1.y - self.gameData.center.y)
         let v2 = CGVector(dx: p2.x - self.gameData.center.x, dy: p2.y - self.gameData.center.y)
@@ -254,10 +268,12 @@ public class GameScene: SKScene {
 
 extension GameScene: SKButtonDelegate, HelpButtonDelegate {
     public func displayHelp(column: Int) {
-        guard let safe = self.safe else {
-            return
+        if self.helpColumn == column {
+            self.helpColumn = nil
+        } else {
+            self.helpColumn = column
         }
-        self.helpLabel.text = safe.getCodeWithKeyFromColumn(column)
+        self.updateHelp()
     }
     
     public func loadGameScene() {

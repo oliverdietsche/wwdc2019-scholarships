@@ -1,6 +1,7 @@
 import PlaygroundSupport
 import SpriteKit
 import Foundation
+import UIKit
 
 public class InitialScene: SKScene {
     
@@ -18,39 +19,18 @@ public class InitialScene: SKScene {
     public override func didMove(to view: SKView) {
         self.backgroundColor = .white
         
-        let helpButton = HelpButton(size: CGSize(width: 40, height: 40), text: "001", column: 0, degree: 0)
-        helpButton.delegate = self
-        helpButton.position = CGPoint(x: self.gameData.center.x, y: self.gameData.center.y + 100)
-        self.addChild(helpButton)
-        
-        let playButton = SKButton(size: CGSize(width: 100, height: 100), type: .play, texture: SKTexture(imageNamed: "weirdo.png"))
+        let playButton = GameControlButton(size: CGSize(width: 150, height: 50), type: .play, texture: SKTexture(imageNamed: "play.png"))
         playButton.delegate = self
-        playButton.position = CGPoint(x: self.gameData.center.x, y: self.gameData.center.y - 100)
+        playButton.position = CGPoint(x: self.gameData.center.x, y: 35)
         self.addChild(playButton)
     }
 }
 
-extension InitialScene: SKButtonDelegate, HelpButtonDelegate {
-    public func displayHelp(column: Int) {
-        print("display help")
-    }
-    
+extension InitialScene: SKButtonDelegate {
     public func loadGameScene() {
         guard let view = self.view else {
             return
         }
         view.presentScene(GameScene(self.gameData), transition: SKTransition.crossFade(withDuration: 1))
-    }
-    
-    public func shuffleLayers() {
-        fatalError("Not supported in InitialScene")
-    }
-    
-    public func loadHomeScene() {
-        fatalError("Not supported in InitialScene")
-    }
-    
-    public func solveLayers() {
-        fatalError("Not supported in InitialScene")
     }
 }

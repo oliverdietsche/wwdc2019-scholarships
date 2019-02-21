@@ -23,6 +23,10 @@ public class CirclePiece {
         self.circleArc.addChild(self.label)
     }
     
+    public func setFillColor(color: SKColor) {
+        self.circleArc.fillColor = color
+    }
+    
     public func solve(duration: Double) {
         self.abortAllActions()
         self.doRotateAction(angle: self.getConvertedZRotation(shapeNode: self.circleArc) * -1, duration: duration)

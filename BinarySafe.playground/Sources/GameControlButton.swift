@@ -1,13 +1,13 @@
 import SpriteKit
 
-protocol SKButtonDelegate {
-    func loadGameScene()
-    func shuffleLayers()
-    func loadHomeScene()
-    func solveLayers()
+@objc protocol SKButtonDelegate {
+    @objc optional func loadGameScene()
+    @objc optional func shuffleLayers()
+    @objc optional func loadHomeScene()
+    @objc optional func solveLayers()
 }
 
-class SKButton: SKSpriteNode {
+class GameControlButton: SKSpriteNode {
     enum ButtonType {
         case play, shuffle, home, solve
     }
@@ -63,13 +63,13 @@ class SKButton: SKSpriteNode {
             
             switch self.type {
             case .play:
-                delegate.loadGameScene()
+                delegate.loadGameScene?()
             case .shuffle:
-                delegate.shuffleLayers()
+                delegate.shuffleLayers?()
             case .home:
-                delegate.loadHomeScene()
+                delegate.loadHomeScene?()
             case .solve:
-                delegate.solveLayers()
+                delegate.solveLayers?()
             }
         }
     }

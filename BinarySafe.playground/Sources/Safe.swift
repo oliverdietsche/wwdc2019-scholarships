@@ -12,6 +12,12 @@ public class Safe {
         self.code = [Int]()
     }
     
+    public func resetFillColor() {
+        for i in 0..<self.layers.count {
+            self.layers[i].setFillColor(color: self.gameData.fillColor)
+        }
+    }
+    
     public func setCode(_ code: [Int]) {
         self.code = code
     }
@@ -31,7 +37,9 @@ public class Safe {
             }
             pieceIndex = (pieceIndex + column) % self.gameData.pieces
             
-            code += layers[iLayer].getPiece(pieceIndex).getText()
+            let piece = layers[iLayer].getPiece(pieceIndex)
+            code += piece.getText()
+            piece.setFillColor(color: .yellow)
         }
         guard let calculatedKey = Int(code, radix: 2) else {
             return ""

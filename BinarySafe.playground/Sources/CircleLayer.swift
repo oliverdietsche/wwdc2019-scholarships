@@ -11,6 +11,12 @@ public class CircleLayer {
         self.circlePieces = circlePieces
     }
     
+    public func setFillColor(color: SKColor) {
+        for i in 0..<self.circlePieces.count {
+            self.circlePieces[i].setFillColor(color: color)
+        }
+    }
+    
     public func solve(duration: Double) {
         for i in 0..<self.circlePieces.count {
             self.circlePieces[i].solve(duration: duration)
