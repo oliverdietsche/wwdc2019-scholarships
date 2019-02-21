@@ -31,35 +31,36 @@ public class MenuScene: SKScene {
     public override func didMove(to view: SKView) {
         self.backgroundColor = .white
         
-        let titleSize = CGSize(width: view.frame.width * 0.6, height: 80)
-        let itemSize = CGSize(width: view.frame.width * 0.4, height: 40)
+        let titleSize = CGSize(width: self.gameData.width * 0.6, height: 80)
+        let itemSize = CGSize(width: self.gameData.width * 0.4, height: 40)
         
-        let titleLabel_frame = CGRect(origin: CGPoint(x: view.frame.width * 0.2, y: 40), size: titleSize)
+        let titleLabel_frame = CGRect(origin: CGPoint(x: self.gameData.width * 0.2, y: 40), size: titleSize)
         let titleLabel = UILabel(frame: titleLabel_frame)
         titleLabel.font = UIFont(name: "Noteworthy-Bold", size: 40)
         titleLabel.textAlignment = .center
         titleLabel.text = "BinarySafe"
+        view.addSubview(titleLabel)
         
-        let layersLabel_frame = CGRect(origin: CGPoint(x: view.frame.width * 0.3, y: 140), size: itemSize)
+        let layersLabel_frame = CGRect(origin: CGPoint(x: self.gameData.width * 0.3, y: 140), size: itemSize)
         let layersLabel = UILabel(frame: layersLabel_frame)
         layersLabel.textAlignment = .center
         layersLabel.text = "Layers: \(self.gameData.layers)"
         view.addSubview(layersLabel)
         self.layersLabel = layersLabel
         
-        let layersSlider_frame = CGRect(origin: CGPoint(x: view.frame.width * 0.3, y: 170), size: itemSize)
+        let layersSlider_frame = CGRect(origin: CGPoint(x: self.gameData.width * 0.3, y: 170), size: itemSize)
         let layersSlider = self.newSlider(frame: layersSlider_frame, minValue: 2, maxValue: 6, value: Float(self.gameData.layers))
         layersSlider.addTarget(self, action: #selector(changeLayersValue(_:)), for: .valueChanged)
         view.addSubview(layersSlider)
         
-        let piecesLabel_frame = CGRect(origin: CGPoint(x: view.frame.width * 0.3, y: 240), size: itemSize)
+        let piecesLabel_frame = CGRect(origin: CGPoint(x: self.gameData.width * 0.3, y: 240), size: itemSize)
         let piecesLabel = UILabel(frame: piecesLabel_frame)
         piecesLabel.textAlignment = .center
         piecesLabel.text = "Pieces: \(self.gameData.pieces)"
         view.addSubview(piecesLabel)
         self.piecesLabel = piecesLabel
         
-        let piecesSlider_frame = CGRect(origin: CGPoint(x: view.frame.width * 0.3, y: 270), size: itemSize)
+        let piecesSlider_frame = CGRect(origin: CGPoint(x: self.gameData.width * 0.3, y: 270), size: itemSize)
         let piecesSlider = self.newSlider(frame: piecesSlider_frame, minValue: 2, maxValue: 10, value: Float(self.gameData.pieces))
         piecesSlider.addTarget(self, action: #selector(changePiecesValue(_:)), for: .valueChanged)
         view.addSubview(piecesSlider)
