@@ -1,9 +1,5 @@
 import SpriteKit
 
-protocol HelpButtonDelegate {
-    func displayHelp(column: Int)
-}
-
 class HelpButton: SKSpriteNode {
     public var delegate: HelpButtonDelegate?
     private let column: Int

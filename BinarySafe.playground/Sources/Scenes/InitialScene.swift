@@ -5,7 +5,7 @@ import UIKit
 
 public class InitialScene: SKScene {
     
-    var gameData: GameData
+    private var gameData: GameData
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("NSCoding not supported")
@@ -16,6 +16,12 @@ public class InitialScene: SKScene {
         super.init(size: CGSize(width: gameData.width, height: gameData.height))
     }
     
+    public override func didChangeSize(_ oldSize: CGSize) {
+        self.gameData.width = Double(self.size.width)
+        self.gameData.height = Double(self.size.height)
+        self.reloadScene()
+    }
+    
     public override func didMove(to view: SKView) {
         self.backgroundColor = .white
         
@@ -24,9 +30,18 @@ public class InitialScene: SKScene {
         playButton.position = CGPoint(x: self.gameData.center.x, y: 35)
         self.addChild(playButton)
     }
+    
+    // MARK: private
+    
+    private func reloadScene() {
+        guard let view = self.view else {
+            return
+        }
+        view.presentScene(InitialScene(self.gameData))
+    }
 }
 
-extension InitialScene: SKButtonDelegate {
+extension InitialScene: GameControlButtonDelegate {
     public func loadGameScene() {
         guard let view = self.view else {
             return

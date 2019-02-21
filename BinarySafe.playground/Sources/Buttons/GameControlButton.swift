@@ -1,17 +1,10 @@
 import SpriteKit
 
-@objc protocol SKButtonDelegate {
-    @objc optional func loadGameScene()
-    @objc optional func shuffleLayers()
-    @objc optional func loadHomeScene()
-    @objc optional func solveLayers()
-}
-
 class GameControlButton: SKSpriteNode {
     enum ButtonType {
         case play, shuffle, home, solve
     }
-    public var delegate: SKButtonDelegate?
+    public var delegate: GameControlButtonDelegate?
     private var isSelected: Bool
     private let type: ButtonType
     

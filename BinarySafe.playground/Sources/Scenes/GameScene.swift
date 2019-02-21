@@ -3,14 +3,13 @@ import SpriteKit
 import Foundation
 
 public class GameScene: SKScene {
-    let lineWidth: CGFloat = 3
-    
-    private let gameData: GameData
+    private var gameData: GameData
     private var innerCircle: SKShapeNode
     private var helpLabel: SKLabelNode
     private var movesLabel: SKLabelNode
     private var moves: Int
     private var solved: Bool
+    private var isViewChanged: Bool
     
     private var helpColumn: Int?
     private var safe: Safe?
@@ -30,8 +29,17 @@ public class GameScene: SKScene {
         self.movesLabel = SKLabelNode(fontNamed: "Arial")
         self.moves = 0
         self.solved = false
+        self.isViewChanged = false
         
         super.init(size: CGSize(width: gameData.width, height: gameData.height))
+    }
+    
+    public override func didChangeSize(_ oldSize: CGSize) {
+        if !self.isViewChanged {
+            self.gameData.width = Double(self.size.width)
+            self.gameData.height = Double(self.size.height)
+            self.reloadScene()
+        }
     }
     
     public override func didMove(to view: SKView) {
@@ -130,11 +138,11 @@ public class GameScene: SKScene {
     private func setup() {
         self.backgroundColor = .white
         
-        let movesLabel_position = CGPoint(x: 10, y: self.gameData.height - 30)
-        self.setupLabel(label: self.movesLabel, position: movesLabel_position, fontSize: 20, text: "Moves:\(self.moves)", hAlignment: .left)
+        let movesLabel_position = CGPoint(x: 10, y: self.gameData.height - Double(self.gameData.fontSize))
+        self.setupLabel(label: self.movesLabel, position: movesLabel_position, fontSize: self.gameData.fontSize, text: "Moves:\(self.moves)", hAlignment: .left)
         
-        let helpLabel_position = CGPoint(x: Double(self.gameData.center.x), y: self.gameData.height - 100)
-        self.setupLabel(label: self.helpLabel, position: helpLabel_position, fontSize: 30, text: "HelpLabel", hAlignment: .center)
+        let helpLabel_position = CGPoint(x: 10, y: self.gameData.height - Double(self.gameData.fontSize * 2.5))
+        self.setupLabel(label: self.helpLabel, position: helpLabel_position, fontSize: self.gameData.fontSize * 1.2, text: "HelpLabel", hAlignment: .left)
         
         self.setupInnerCircle()
         
@@ -157,26 +165,26 @@ public class GameScene: SKScene {
     private func setupInnerCircle() {
         self.innerCircle.position = self.gameData.center
         self.innerCircle.zPosition = 1
-        self.innerCircle.lineWidth = self.lineWidth
+        self.innerCircle.lineWidth = self.gameData.lineWidth
         self.innerCircle.strokeColor = self.gameData.borderColor
         self.innerCircle.fillColor = self.gameData.centerColor
         self.addChild(self.innerCircle)
     }
     
     private func setupButtons() {
-        let shuffleButton = GameControlButton(size: CGSize(width: 60, height: 60), type: .shuffle, texture: SKTexture(imageNamed: "shuffle2.png"))
+        let shuffleButton = GameControlButton(size: CGSize(width: 60, height: 60), type: .shuffle, texture: SKTexture(imageNamed: "shuffle.png"))
         shuffleButton.delegate = self
-        shuffleButton.position = CGPoint(x: 40, y: 40)
+        shuffleButton.position = CGPoint(x: 40, y: 110)
         self.addChild(shuffleButton)
         
         let homeButton = GameControlButton(size: CGSize(width: 60, height: 60), type: .home, texture: SKTexture(imageNamed: "home.png"))
         homeButton.delegate = self
-        homeButton.position = CGPoint(x: self.gameData.center.x, y: 40)
+        homeButton.position = CGPoint(x: 40, y: 40)
         self.addChild(homeButton)
         
         let solveButton = GameControlButton(size: CGSize(width: 60, height: 60), type: .solve, texture: SKTexture(imageNamed: "solve.png"))
         solveButton.delegate = self
-        solveButton.position = CGPoint(x: self.gameData.width - 40, y: 40)
+        solveButton.position = CGPoint(x: 110, y: 40)
         self.addChild(solveButton)
     }
     
@@ -221,7 +229,7 @@ public class GameScene: SKScene {
     }
     
     private func spawnParticles(position: CGPoint) {
-        guard let particles = SKEmitterNode(fileNamed: "MyParticle") else {
+        guard let particles = SKEmitterNode(fileNamed: "KeyExplosion") else {
             return
         }
         particles.position = position
@@ -239,6 +247,13 @@ public class GameScene: SKScene {
             return
         }
         self.helpLabel.text = safe.getCodeWithKeyFromColumn(column)
+    }
+    
+    private func reloadScene() {
+        guard let view = self.view else {
+            return
+        }
+        view.presentScene(GameScene(self.gameData))
     }
     
     private func calculateAngle(point1 p1: CGPoint, point2 p2: CGPoint) -> CGFloat {
@@ -266,7 +281,7 @@ public class GameScene: SKScene {
     }
 }
 
-extension GameScene: SKButtonDelegate, HelpButtonDelegate {
+extension GameScene: GameControlButtonDelegate, HelpButtonDelegate {
     public func displayHelp(column: Int) {
         if self.helpColumn == column {
             self.helpColumn = nil
@@ -274,10 +289,6 @@ extension GameScene: SKButtonDelegate, HelpButtonDelegate {
             self.helpColumn = column
         }
         self.updateHelp()
-    }
-    
-    public func loadGameScene() {
-        fatalError("Not supported in GameScene")
     }
     
     public func shuffleLayers() {
@@ -300,8 +311,8 @@ extension GameScene: SKButtonDelegate, HelpButtonDelegate {
         guard let view = self.view else {
             return
         }
-        view.subviews.forEach({ $0.removeFromSuperview() })
         view.presentScene(MenuScene(self.gameData), transition: SKTransition.crossFade(withDuration: 1))
+        self.isViewChanged = true
     }
     
     public func solveLayers() {
@@ -311,6 +322,7 @@ extension GameScene: SKButtonDelegate, HelpButtonDelegate {
         guard let safe = self.safe else {
             return
         }
+        safe.resetFillColor()
         self.solved = true
         self.movesLabel.text = "Auto-Solved"
         safe.solve(duration: 1.5)

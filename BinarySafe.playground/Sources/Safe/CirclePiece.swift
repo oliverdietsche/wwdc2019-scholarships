@@ -137,7 +137,7 @@ public class CirclePiece {
         let label = SKLabelNode(fontNamed: "Arial")
         label.horizontalAlignmentMode = .center
         label.verticalAlignmentMode = .center
-        label.fontSize = CGFloat(self.gameData.innerRadius * 0.8)
+        label.fontSize = self.gameData.fontSize
         label.fontColor = UIColor.black
         label.position = posPoint
         
