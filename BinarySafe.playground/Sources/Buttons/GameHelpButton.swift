@@ -1,7 +1,7 @@
 import SpriteKit
 
-class HelpButton: SKSpriteNode {
-    public var delegate: HelpButtonDelegate?
+class GameHelpButton: SKSpriteNode {
+    public var delegate: GameHelpButtonDelegate?
     private let column: Int
     private var isSelected: Bool
     

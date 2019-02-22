@@ -1,5 +1,5 @@
 import Foundation
 
-protocol HelpButtonDelegate {
+protocol GameHelpButtonDelegate {
     func displayHelp(column: Int)
 }

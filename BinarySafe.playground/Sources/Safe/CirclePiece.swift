@@ -1,4 +1,3 @@
-import Foundation
 import SpriteKit
 
 public class CirclePiece {
@@ -119,7 +118,7 @@ public class CirclePiece {
         let circle = SKShapeNode()
         circle.fillColor = self.gameData.fillColor
         circle.strokeColor = self.gameData.borderColor
-        circle.lineWidth = 3.0
+        circle.lineWidth = self.gameData.lineWidth
         circle.path = arc.cgPath
         circle.position = self.gameData.center
         
@@ -137,7 +136,7 @@ public class CirclePiece {
         let label = SKLabelNode(fontNamed: "Arial")
         label.horizontalAlignmentMode = .center
         label.verticalAlignmentMode = .center
-        label.fontSize = self.gameData.fontSize
+        label.fontSize = self.gameData.fontSize_m
         label.fontColor = UIColor.black
         label.position = posPoint
         

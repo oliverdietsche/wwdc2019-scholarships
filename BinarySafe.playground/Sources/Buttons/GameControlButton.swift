@@ -2,7 +2,7 @@ import SpriteKit
 
 class GameControlButton: SKSpriteNode {
     enum ButtonType {
-        case play, shuffle, home, solve
+        case play, shuffle, home, solve, help
     }
     public var delegate: GameControlButtonDelegate?
     private var isSelected: Bool
@@ -63,6 +63,8 @@ class GameControlButton: SKSpriteNode {
                 delegate.loadHomeScene?()
             case .solve:
                 delegate.solveLayers?()
+            case .help:
+                delegate.loadHelpScene?()
             }
         }
     }

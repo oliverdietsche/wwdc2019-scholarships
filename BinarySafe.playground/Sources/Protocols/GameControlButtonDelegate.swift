@@ -5,4 +5,5 @@ import Foundation
     @objc optional func shuffleLayers()
     @objc optional func loadHomeScene()
     @objc optional func solveLayers()
+    @objc optional func loadHelpScene()
 }

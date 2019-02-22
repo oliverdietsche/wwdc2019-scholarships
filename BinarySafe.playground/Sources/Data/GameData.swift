@@ -2,8 +2,8 @@ import SpriteKit
 
 public struct GameData {    
     public init() {
-        self.width = 0
-        self.height = 0
+        self.width = 400
+        self.height = 600
         self.layers = 3
         self.pieces = 4
     }
@@ -17,15 +17,44 @@ public struct GameData {
     public var layers: Int
     public var pieces: Int
     
-    public var lineWidth: CGFloat {
+    public var gameButtonLength: CGFloat {
         get {
-            return CGFloat(self.innerRadius * 0.05)
+            return CGFloat(self.innerRadius * 2)
         }
     }
     
-    public var fontSize: CGFloat {
+    public var menuButtonSize: CGSize {
+        get {
+            var height = (self.width * 0.5 - 15) * 0.33
+            if height > self.height * 0.25 {
+                height = self.height * 0.25 - 20
+            }
+            let width = height * 3
+            return CGSize(width: width, height: height)
+        }
+    }
+    
+    public var lineWidth: CGFloat {
+        get {
+            return CGFloat(self.innerRadius * 0.1)
+        }
+    }
+    
+    public var fontSize_s: CGFloat {
+        get {
+            return CGFloat(self.innerRadius * 0.6)
+        }
+    }
+    
+    public var fontSize_m: CGFloat {
         get {
             return CGFloat(self.innerRadius * 0.8)
+        }
+    }
+    
+    public var fontSize_l: CGFloat {
+        get {
+            return CGFloat(self.innerRadius)
         }
     }
     
