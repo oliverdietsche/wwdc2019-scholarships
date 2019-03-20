@@ -22,14 +22,14 @@ public class HelpScene: SKScene {
     public override func didMove(to view: SKView) {
         self.backgroundColor = .white
         
-        let title = SKShapeNode(rectOf: CGSize(width: self.gameData.width * 0.9, height: self.gameData.width * 0.18))
+        let title = SKShapeNode(rectOf: self.gameData.titleSize)
         title.fillColor = .white
         title.fillTexture = SKTexture(imageNamed: "title.png")
-        title.position = CGPoint(x: Double(self.gameData.center.x), y: self.gameData.height - 10 - self.gameData.width * 0.09)
+        title.position = CGPoint(x: Double(self.gameData.center.x), y: self.gameData.height - 10 - Double(self.gameData.titleSize.height * 0.5))
         self.addChild(title)
         
         let descriptionText = "When it comes to calculating between decimal and binary, there are multiple ways to do so. I think the most common one is to imagine oneself a grid with numbers.\n\nThis grid starts with 1 at the very right and the number gets always doubled and written down further left of the start(..., 8, 4, 2 ,1). Once you’ve got as many as the binary code has numbers, you can place the binary code underneath your calculated numbers. Now add all your calculated numbers with a 1 beneath itself and you’ll get the decimal number.\n\nTo get the binary from decimal, you just have to draw the same grid and split the number in as few parts as possible."
-        let descriptionPosition = CGPoint(x: Double(self.gameData.center.x), y: self.gameData.height - 20 - self.gameData.width * 0.18)
+        let descriptionPosition = CGPoint(x: Double(self.gameData.center.x), y: self.gameData.height - 20 - Double(self.gameData.titleSize.height))
         let description = self.newParagraphLabel(text: descriptionText, width: CGFloat(self.gameData.width * 0.9), position: descriptionPosition)
         self.addChild(description)
         
@@ -49,7 +49,7 @@ public class HelpScene: SKScene {
     
     private func newParagraphLabel(text: String, width: CGFloat, position: CGPoint) -> SKLabelNode {
         let label = SKLabelNode(fontNamed: "Arial")
-        label.fontSize = self.gameData.fontSize_s
+        label.fontSize = self.gameData.fontSizeSmall
         label.fontColor = UIColor.black
         label.verticalAlignmentMode = .top
         label.lineBreakMode = NSLineBreakMode.byWordWrapping

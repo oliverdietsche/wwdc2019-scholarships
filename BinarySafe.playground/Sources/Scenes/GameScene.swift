@@ -157,11 +157,11 @@ public class GameScene: SKScene {
     private func setup() {
         self.backgroundColor = .white
         
-        let movesLabel_position = CGPoint(x: 10, y: self.gameData.height - Double(self.gameData.fontSize_m))
-        self.setupLabel(label: self.movesLabel, position: movesLabel_position, fontSize: self.gameData.fontSize_m, text: "Moves: \(self.moves)", hAlignment: .left)
+        let movesLabel_position = CGPoint(x: 10, y: self.gameData.height - Double(self.gameData.fontSizeMedium))
+        self.setupLabel(label: self.movesLabel, position: movesLabel_position, fontSize: self.gameData.fontSizeMedium, text: "Moves: \(self.moves)", hAlignment: .left)
         
-        let helpLabel_position = CGPoint(x: 10, y: self.gameData.height - Double(self.gameData.fontSize_m * 2.5))
-        self.setupLabel(label: self.helpLabel, position: helpLabel_position, fontSize: self.gameData.fontSize_l, text: "", hAlignment: .left)
+        let helpLabel_position = CGPoint(x: 10, y: self.gameData.height - Double(self.gameData.fontSizeLarge * 2.5))
+        self.setupLabel(label: self.helpLabel, position: helpLabel_position, fontSize: self.gameData.fontSizeLarge, text: "", hAlignment: .left)
         
         self.setupInnerCircle()
         

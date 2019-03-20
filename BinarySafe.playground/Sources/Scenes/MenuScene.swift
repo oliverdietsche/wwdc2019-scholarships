@@ -31,10 +31,10 @@ public class MenuScene: SKScene {
     public override func didMove(to view: SKView) {
         self.backgroundColor = .white
         
-        let title = SKShapeNode(rectOf: CGSize(width: self.gameData.width * 0.9, height: self.gameData.width * 0.18))
+        let title = SKShapeNode(rectOf: self.gameData.titleSize)
         title.fillColor = .white
         title.fillTexture = SKTexture(imageNamed: "title.png")
-        title.position = CGPoint(x: Double(self.gameData.center.x), y: self.gameData.height - 10 - self.gameData.width * 0.09)
+        title.position = CGPoint(x: Double(self.gameData.center.x), y: self.gameData.height - 10 - Double(self.gameData.titleSize.height * 0.5))
         self.addChild(title)
         
         let itemSize = CGSize(width: self.gameData.width * 0.6, height: Double(self.gameData.gameButtonHeight))

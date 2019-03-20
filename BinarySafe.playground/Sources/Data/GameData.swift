@@ -17,14 +17,19 @@ public struct GameData {
     public let fillColor: SKColor = UIColor(displayP3Red: 0.85, green: 0.85, blue: 0.85, alpha: 1)
     public let centerColor: SKColor = UIColor(displayP3Red: 0.5, green: 0.5, blue: 0.5, alpha: 1)
     
+    public let fontSizeSmall: CGFloat = 20
+    public let fontSizeMedium: CGFloat = 25
+    public let fontSizeLarge: CGFloat = 30
+    public let gameButtonHeight: CGFloat = 60
+    
     public var width: Double
     public var height: Double
     public var layers: Int
     public var pieces: Int
     
-    public var gameButtonHeight: CGFloat {
+    public var titleSize: CGSize {
         get {
-            return CGFloat(self.height * 0.1)
+            return CGSize(width: self.width * 0.9, height: self.width * 0.18)
         }
     }
     
@@ -39,27 +44,25 @@ public struct GameData {
         }
     }
     
+    public var innerRadius: Double {
+        get {
+            if width > height {
+                return Double(self.height * 0.5) / Double(self.layers + 3)
+            } else {
+                return Double(self.width * 0.5) / Double(self.layers + 3)
+            }
+        }
+    }
+    
     public var lineWidth: CGFloat {
         get {
             return CGFloat(self.innerRadius * 0.1)
         }
     }
     
-    public var fontSize_s: CGFloat {
-        get {
-            return CGFloat(self.innerRadius * 0.6)
-        }
-    }
-    
-    public var fontSize_m: CGFloat {
+    public var circleFontSize: CGFloat {
         get {
             return CGFloat(self.innerRadius * 0.8)
-        }
-    }
-    
-    public var fontSize_l: CGFloat {
-        get {
-            return CGFloat(self.innerRadius)
         }
     }
     
@@ -84,16 +87,6 @@ public struct GameData {
     public var radianRange: CGFloat {
         get {
             return CGFloat(GeometryData.fullRadianOfCircle / CGFloat(self.pieces))
-        }
-    }
-    
-    public var innerRadius: Double {
-        get {
-            if width > height {
-                return Double(self.height * 0.5) / Double(self.layers + 3)
-            } else {
-                return Double(self.width * 0.5) / Double(self.layers + 3)
-            }
         }
     }
 }

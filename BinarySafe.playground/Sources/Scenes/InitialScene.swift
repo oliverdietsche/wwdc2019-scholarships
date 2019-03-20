@@ -22,14 +22,14 @@ public class InitialScene: SKScene {
     public override func didMove(to view: SKView) {
         self.backgroundColor = .white
         
-        let title = SKShapeNode(rectOf: CGSize(width: self.gameData.width * 0.9, height: self.gameData.width * 0.18))
+        let title = SKShapeNode(rectOf: self.gameData.titleSize)
         title.fillColor = .white
         title.fillTexture = SKTexture(imageNamed: "title.png")
-        title.position = CGPoint(x: Double(self.gameData.center.x), y: self.gameData.height - 10 - self.gameData.width * 0.09)
+        title.position = CGPoint(x: Double(self.gameData.center.x), y: self.gameData.height - 10 - Double(self.gameData.titleSize.height * 0.5))
         self.addChild(title)
         
         let descriptionText = "Welcome to the Binary-Safe!\nYour goal is to turn the layers of the Safe, so the binary-code of each column(!written from inside to outside!) results the decimal number on the outside. If you need help with the convertion from binary to decimal, you can view a short explanation on the \"Help\" button or click on the number outside of a column to view the solution of this column. Enjoy!"
-        let descriptionPosition = CGPoint(x: Double(self.gameData.center.x), y: self.gameData.height - 20 - self.gameData.width * 0.18)
+        let descriptionPosition = CGPoint(x: Double(self.gameData.center.x), y: self.gameData.height - 20 - Double(self.gameData.titleSize.height))
         let description = self.newParagraphLabel(text: descriptionText, width: CGFloat(self.gameData.width * 0.9), position: descriptionPosition)
         self.addChild(description)
         
@@ -48,7 +48,7 @@ public class InitialScene: SKScene {
     
     private func newParagraphLabel(text: String, width: CGFloat, position: CGPoint) -> SKLabelNode {
         let label = SKLabelNode(fontNamed: "Arial")
-        label.fontSize = self.gameData.fontSize_s
+        label.fontSize = self.gameData.fontSizeSmall
         label.fontColor = UIColor.black
         label.verticalAlignmentMode = .top
         label.lineBreakMode = NSLineBreakMode.byWordWrapping
