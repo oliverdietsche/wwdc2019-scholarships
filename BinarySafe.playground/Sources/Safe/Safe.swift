@@ -64,7 +64,6 @@ public class Safe {
             guard let calculatedKey = Int(calculatedCode, radix: 2) else {
                 return false
             }
-//            print("\(calculatedKey)(\(code)) == \(key)")
             if calculatedKey != self.code[iPiece] {
                 solved = false
             }
@@ -75,14 +74,14 @@ public class Safe {
     }
     
     public func shuffle() {
-        var lastRotationIndex = 0
-        var rotationIndex = Int.random(in: self.gameData.pieces..<(self.gameData.pieces * 2))
+        var lastRotationCount = 0
+        var rotationCount = Int.random(in: self.gameData.pieces..<(self.gameData.pieces * 2))
         for i in 0..<self.layers.count {
-            while rotationIndex == lastRotationIndex {
-                rotationIndex = Int.random(in: self.gameData.pieces..<(self.gameData.pieces * 2))
+            while rotationCount == lastRotationCount {
+                rotationCount = Int.random(in: self.gameData.pieces..<(self.gameData.pieces * 2))
             }
-            lastRotationIndex = rotationIndex
-            self.layers[i].shuffle(rotationIndex: rotationIndex)
+            lastRotationCount = rotationCount
+            self.layers[i].shuffle(rotationCount: rotationCount)
         }
     }
     

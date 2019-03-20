@@ -1,25 +1,30 @@
 import SpriteKit
 
+// It stores all the relevant data for an instance of a game
 public struct GameData {    
     public init() {
-        self.width = 400
-        self.height = 600
+        // Default initialation
+        self.width = 600
+        self.height = 400
+        
+        // Beginning amount
         self.layers = 3
         self.pieces = 4
     }
     
     public let borderColor: SKColor = UIColor.black
-    public let fillColor: SKColor = UIColor.lightGray
-    public let centerColor: SKColor = UIColor.gray
+    public let arrowColor: SKColor = UIColor.black
+    public let fillColor: SKColor = UIColor(displayP3Red: 0.85, green: 0.85, blue: 0.85, alpha: 1)
+    public let centerColor: SKColor = UIColor(displayP3Red: 0.5, green: 0.5, blue: 0.5, alpha: 1)
     
     public var width: Double
     public var height: Double
     public var layers: Int
     public var pieces: Int
     
-    public var gameButtonLength: CGFloat {
+    public var gameButtonHeight: CGFloat {
         get {
-            return CGFloat(self.innerRadius * 2)
+            return CGFloat(self.height * 0.1)
         }
     }
     

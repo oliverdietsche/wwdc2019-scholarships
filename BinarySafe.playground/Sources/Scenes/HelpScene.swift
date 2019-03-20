@@ -28,8 +28,9 @@ public class HelpScene: SKScene {
         title.position = CGPoint(x: Double(self.gameData.center.x), y: self.gameData.height - 10 - self.gameData.width * 0.09)
         self.addChild(title)
         
-        let descriptionText = "That's how you can calculate binary code!"
-        let description = self.newParagraphLabel(text: descriptionText, width: CGFloat(self.gameData.width * 0.9), position: CGPoint(x: Double(self.gameData.center.x), y: self.gameData.height - 20 - self.gameData.width * 0.18))
+        let descriptionText = "When it comes to calculating between decimal and binary, there are multiple ways to do so. I think the most common one is to imagine oneself a grid with numbers.\n\nThis grid starts with 1 at the very right and the number gets always doubled and written down further left of the start(..., 8, 4, 2 ,1). Once you’ve got as many as the binary code has numbers, you can place the binary code underneath your calculated numbers. Now add all your calculated numbers with a 1 beneath itself and you’ll get the decimal number.\n\nTo get the binary from decimal, you just have to draw the same grid and split the number in as few parts as possible."
+        let descriptionPosition = CGPoint(x: Double(self.gameData.center.x), y: self.gameData.height - 20 - self.gameData.width * 0.18)
+        let description = self.newParagraphLabel(text: descriptionText, width: CGFloat(self.gameData.width * 0.9), position: descriptionPosition)
         self.addChild(description)
         
         let image = SKShapeNode(rectOf: self.gameData.menuButtonSize)

@@ -37,40 +37,48 @@ public class MenuScene: SKScene {
         title.position = CGPoint(x: Double(self.gameData.center.x), y: self.gameData.height - 10 - self.gameData.width * 0.09)
         self.addChild(title)
         
-        let itemSize = CGSize(width: self.gameData.width * 0.6, height: Double(self.gameData.gameButtonLength))
+        let itemSize = CGSize(width: self.gameData.width * 0.6, height: Double(self.gameData.gameButtonHeight))
         
-        let layersLabel_frame = CGRect(origin: CGPoint(x: self.gameData.width * 0.2, y: Double(self.gameData.gameButtonLength * 2)), size: itemSize)
+        let layersLabelOrigin = CGPoint(x: self.gameData.width * 0.2, y: Double(self.gameData.gameButtonHeight * 2))
+        let layersLabel_frame = CGRect(origin: layersLabelOrigin, size: itemSize)
         let layersLabel = UILabel(frame: layersLabel_frame)
         layersLabel.textAlignment = .center
         layersLabel.text = "Layers: \(self.gameData.layers)"
         view.addSubview(layersLabel)
         self.layersLabel = layersLabel
         
-        let layersSlider_frame = CGRect(origin: CGPoint(x: self.gameData.width * 0.2, y: Double(self.gameData.gameButtonLength * 2.5)), size: itemSize)
-        let layersSlider = self.newSlider(frame: layersSlider_frame, minValue: 2, maxValue: 6, value: Float(self.gameData.layers))
+        let layersSliderOrigin = CGPoint(x: self.gameData.width * 0.2, y: Double(self.gameData.gameButtonHeight * 2.5))
+        let layersSlider_frame = CGRect(origin: layersSliderOrigin, size: itemSize)
+        let layersSlider = self.newSlider(frame: layersSlider_frame, minValue: 2, maxValue: 6, value: Float(self.gameData.layers))// TODO: maybe min and max value in gameData
         layersSlider.addTarget(self, action: #selector(changeLayersValue(_:)), for: .valueChanged)
         view.addSubview(layersSlider)
         
-        let piecesLabel_frame = CGRect(origin: CGPoint(x: self.gameData.width * 0.2, y: Double(self.gameData.gameButtonLength * 3.5)), size: itemSize)
+        let piecesLabelOrigin = CGPoint(x: self.gameData.width * 0.2, y: Double(self.gameData.gameButtonHeight * 3.5))
+        let piecesLabel_frame = CGRect(origin: piecesLabelOrigin, size: itemSize)
         let piecesLabel = UILabel(frame: piecesLabel_frame)
         piecesLabel.textAlignment = .center
         piecesLabel.text = "Pieces: \(self.gameData.pieces)"
         view.addSubview(piecesLabel)
         self.piecesLabel = piecesLabel
         
-        let piecesSlider_frame = CGRect(origin: CGPoint(x: self.gameData.width * 0.2, y: Double(self.gameData.gameButtonLength * 4)), size: itemSize)
-        let piecesSlider = self.newSlider(frame: piecesSlider_frame, minValue: 3, maxValue: 10, value: Float(self.gameData.pieces))
+        let piecesSliderOrigin = CGPoint(x: self.gameData.width * 0.2, y: Double(self.gameData.gameButtonHeight * 4))
+        let piecesSlider_frame = CGRect(origin: piecesSliderOrigin, size: itemSize)
+        let piecesSlider = self.newSlider(frame: piecesSlider_frame, minValue: 3, maxValue: 10, value: Float(self.gameData.pieces))// TODO: maybe min and max value in gameData
         piecesSlider.addTarget(self, action: #selector(changePiecesValue(_:)), for: .valueChanged)
         view.addSubview(piecesSlider)
         
-        let helpButton = GameControlButton(size: self.gameData.menuButtonSize, type: .help, texture: SKTexture(imageNamed: "help"))
+        let helpButton = GameControlButton(size: self.gameData.menuButtonSize, type: .help, texture: SKTexture(imageNamed: "help.png"))
         helpButton.delegate = self
-        helpButton.position = CGPoint(x: self.gameData.menuButtonSize.width * 0.5 + 10, y: 10 + self.gameData.menuButtonSize.height * 0.5)
+        let helpButtonX = self.gameData.menuButtonSize.width * 0.5 + 10
+        let helpButtonY = 10 + self.gameData.menuButtonSize.height * 0.5
+        helpButton.position = CGPoint(x: helpButtonX, y: helpButtonY)
         self.addChild(helpButton)
         
         let playButton = GameControlButton(size: self.gameData.menuButtonSize, type: .play, texture: SKTexture(imageNamed: "play.png"))
         playButton.delegate = self
-        playButton.position = CGPoint(x: CGFloat(self.gameData.width) - 10 - self.gameData.menuButtonSize.width * 0.5, y: 10 + self.gameData.menuButtonSize.height * 0.5)
+        let playButtonX = CGFloat(self.gameData.width) - 10 - self.gameData.menuButtonSize.width * 0.5;
+        let playButtonY = 10 + self.gameData.menuButtonSize.height * 0.5;
+        playButton.position = CGPoint(x: playButtonX, y: playButtonY)
         self.addChild(playButton)
     }
     

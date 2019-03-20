@@ -28,16 +28,17 @@ public class InitialScene: SKScene {
         title.position = CGPoint(x: Double(self.gameData.center.x), y: self.gameData.height - 10 - self.gameData.width * 0.09)
         self.addChild(title)
         
-        let descriptionText = "Welcome to the Binary-Safe!\nYour goal is to turn the layers of the Safe, so the binary-code of each column(!written from inside to outside!) results the number on the outside. If you need help with the convertion from binary to decimal, you can click on the number outside of each column. Enjoy!"
-        let description = self.newParagraphLabel(text: descriptionText, width: CGFloat(self.gameData.width * 0.9), position: CGPoint(x: Double(self.gameData.center.x), y: self.gameData.height - 20 - self.gameData.width * 0.18))
+        let descriptionText = "Welcome to the Binary-Safe!\nYour goal is to turn the layers of the Safe, so the binary-code of each column(!written from inside to outside!) results the decimal number on the outside. If you need help with the convertion from binary to decimal, you can view a short explanation on the \"Help\" button or click on the number outside of a column to view the solution of this column. Enjoy!"
+        let descriptionPosition = CGPoint(x: Double(self.gameData.center.x), y: self.gameData.height - 20 - self.gameData.width * 0.18)
+        let description = self.newParagraphLabel(text: descriptionText, width: CGFloat(self.gameData.width * 0.9), position: descriptionPosition)
         self.addChild(description)
         
-        let helpButton = GameControlButton(size: self.gameData.menuButtonSize, type: .help, texture: SKTexture(imageNamed: "help_b"))
+        let helpButton = GameControlButton(size: self.gameData.menuButtonSize, type: .help, texture: SKTexture(imageNamed: "help.png"))
         helpButton.delegate = self
         helpButton.position = CGPoint(x: self.gameData.menuButtonSize.width * 0.5 + 10, y: 10 + self.gameData.menuButtonSize.height * 0.5)
         self.addChild(helpButton)
         
-        let playButton = GameControlButton(size: self.gameData.menuButtonSize, type: .play, texture: SKTexture(imageNamed: "play_b.png"))
+        let playButton = GameControlButton(size: self.gameData.menuButtonSize, type: .play, texture: SKTexture(imageNamed: "play.png"))
         playButton.delegate = self
         playButton.position = CGPoint(x: CGFloat(self.gameData.width) - 10 - self.gameData.menuButtonSize.width * 0.5, y: 10 + self.gameData.menuButtonSize.height * 0.5)
         self.addChild(playButton)

@@ -1,4 +1,5 @@
 import SpriteKit
+import AudioToolbox
 
 public class CircleLayer {
     private let gameData: GameData
@@ -27,19 +28,20 @@ public class CircleLayer {
         for i in 0..<self.circlePieces.count {
             self.circlePieces[i].snap()
         }
+        AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
     }
     
-    public func shuffle(rotationIndex: Int) {
-        let angle = CGFloat(rotationIndex) * self.gameData.radianRange
+    public func shuffle(rotationCount: Int) {
+        let angle = CGFloat(rotationCount) * self.gameData.radianRange
         for i in 0..<self.circlePieces.count {
-            self.circlePieces[i].shuffle(angle: angle, duration: Double(rotationIndex) * 0.2)
+            self.circlePieces[i].shuffle(angle: angle, duration: 1)
         }
     }
     
     public func rotate(angle: CGFloat) {
-        let convertedAngle = self.convertAngleForRotation(angle)
+//        let convertedAngle = self.convertAngleForRotation(angle)
         for i in 0..<self.circlePieces.count {
-            self.circlePieces[i].rotate(angle: convertedAngle)
+            self.circlePieces[i].rotate(angle: angle)
         }
     }
     
@@ -54,15 +56,16 @@ public class CircleLayer {
         return self.circlePieces[index]
     }
     
-    private func convertAngleForRotation(_ angle: CGFloat) -> CGFloat {
-        var convertedAngle: CGFloat = angle
-        if angle > CGFloat.pi || angle < (CGFloat.pi * -1) {
-            if angle > 0 {
-                convertedAngle = (GeometryData.fullRadianOfCircle - angle) * -1
-            } else {
-                convertedAngle = abs((GeometryData.fullRadianOfCircle * -1) - angle)
-            }
-        }
-        return convertedAngle
-    }
+//    Is this even necessary?
+//    private func convertAngleForRotation(_ angle: CGFloat) -> CGFloat {
+//        var convertedAngle: CGFloat = angle
+//        if angle > CGFloat.pi || angle < (CGFloat.pi * -1) {
+//            if angle > 0 {
+//                convertedAngle = (GeometryData.fullRadianOfCircle - angle) * -1
+//            } else {
+//                convertedAngle = abs((GeometryData.fullRadianOfCircle * -1) - angle)
+//            }
+//        }
+//        return convertedAngle
+//    }
 }

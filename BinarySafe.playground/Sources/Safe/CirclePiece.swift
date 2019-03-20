@@ -20,6 +20,9 @@ public class CirclePiece {
         let lb_angle = startDegree.toRadians
         self.label = createLabel(angle: lb_angle)
         self.circleArc.addChild(self.label)
+        
+        let arrow = createArrow(angle: startDegree.toRadians)
+        self.circleArc.addChild(arrow)
     }
     
     public func setFillColor(color: SKColor) {
@@ -77,7 +80,7 @@ public class CirclePiece {
         self.label.removeAllActions()
     }
     
-    // Returns zRotation of a SKShapeNode with a value between 0 and 6.2831853
+    // Returns zRotation of a SKShapeNode with a value between 0 and π * 2
     private func getConvertedZRotation(shapeNode: SKShapeNode) -> CGFloat {
         var convertedZRotation = shapeNode.zRotation.truncatingRemainder(dividingBy: GeometryData.fullRadianOfCircle)
         if convertedZRotation < 0 {
@@ -142,5 +145,59 @@ public class CirclePiece {
         
         return label
     }
+    
+    private func createArrow(angle: Double) -> SKShapeNode {
+        let shiftedAngle = angle + self.gameData.degreeRange.toRadians * 0.5
+        let radius = self.gameData.innerRadius * (self.layerNumber + 0.55)
+
+        let xCord = cos(shiftedAngle) * radius
+        let yCord = sin(shiftedAngle) * radius
+        let posPoint = CGPoint(x: xCord, y: yCord)
+        
+        let length = self.gameData.innerRadius * 0.15
+        let marginBottom = self.gameData.innerRadius * -0.5
+
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: 0, y: length + marginBottom))
+        path.addLine(to: CGPoint(x: length * -1, y: 0 + marginBottom))
+        path.move(to: CGPoint(x: 0, y: length + marginBottom))
+        path.addLine(to: CGPoint(x: length, y: 0 + marginBottom))
+        path.addLine(to: CGPoint(x: length * -1, y: 0 + marginBottom))
+
+        let arrow = SKShapeNode(path: path.cgPath)
+        arrow.fillColor = self.gameData.arrowColor
+        arrow.zPosition = 1
+        arrow.lineWidth = 0
+        arrow.position = posPoint
+        arrow.zRotation = CGFloat(shiftedAngle) - (GeometryData.fullRadianOfCircle * 0.25)
+
+        return arrow
+    }
+    
+    //    private func createArrowLine(angle: Double) -> SKShapeNode {
+    //        let radius = self.gameData.innerRadius * (self.layerNumber + 0.55)
+    //
+    //        let length = self.gameData.innerRadius * 0.5
+    //        let marginTop = length * 0.5
+    //
+    //        let xCord = cos(angle) * radius
+    //        let yCord = sin(angle) * radius
+    //        let posPoint = CGPoint(x: xCord, y: yCord)
+    //
+    //        let path = UIBezierPath()
+    //        path.move(to: CGPoint(x: 0, y: length - marginTop))
+    //        path.addLine(to: CGPoint(x: length * -0.5, y: 0 - marginTop))
+    //        path.move(to: CGPoint(x: 0, y: length - marginTop))
+    //        path.addLine(to: CGPoint(x: length * 0.5, y: 0 - marginTop))
+    //
+    //        let line = SKShapeNode(path: path.cgPath)
+    //        line.zPosition = 1
+    //        line.strokeColor = self.gameData.borderColor
+    //        line.lineWidth = self.gameData.lineWidth * 0.75
+    //        line.position = posPoint
+    //        line.zRotation = CGFloat(angle) - (GeometryData.fullRadianOfCircle * 0.25)
+    //
+    //        return line
+    //    }
 }
 

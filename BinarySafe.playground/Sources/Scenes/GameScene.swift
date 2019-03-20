@@ -1,4 +1,5 @@
 import SpriteKit
+import AVFoundation
 
 public class GameScene: SKScene {
     private var gameData: GameData
@@ -11,6 +12,7 @@ public class GameScene: SKScene {
     private var isLayerSelected: Bool
     private var isViewChanged: Bool
     
+    private var audioPlayer: AVAudioPlayer?
     private var helpColumn: Int?
     private var safe: Safe?
     private var activeLayer: CircleLayer?
@@ -129,11 +131,28 @@ public class GameScene: SKScene {
         
         if safe.isSolved() {
             self.solved = true
+            self.playSound(fileName: "solved");
             self.spawnParticles(position: CGPoint(x: self.gameData.center.x, y: self.gameData.center.y + CGFloat(self.gameData.innerRadius * Double(self.gameData.layers))))
         }
     }
     
     // MARK: private
+    
+    private func playSound(fileName: String) {
+        guard let url = Bundle.main.url(forResource: fileName, withExtension: "m4a") else {
+            return
+        }
+        
+        do {
+            self.audioPlayer = try AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileType.m4a.rawValue)
+            guard let audioPlayer = self.audioPlayer else {
+                return
+            }
+            audioPlayer.play()
+        } catch let error {
+            print(error)
+        }
+    }
     
     private func setup() {
         self.backgroundColor = .white
@@ -172,20 +191,19 @@ public class GameScene: SKScene {
     }
     
     private func setupButtons() {
-        
-        let homeButton = GameControlButton(size: CGSize(width: self.gameData.gameButtonLength, height: self.gameData.gameButtonLength), type: .home, texture: SKTexture(imageNamed: "home.png"))
+        let homeButton = GameControlButton(size: CGSize(width: self.gameData.gameButtonHeight, height: self.gameData.gameButtonHeight), type: .home, texture: SKTexture(imageNamed: "home.png"))
         homeButton.delegate = self
-        homeButton.position = CGPoint(x: 10 + (self.gameData.gameButtonLength * 0.5), y: 10 + (self.gameData.gameButtonLength * 0.5))
+        homeButton.position = CGPoint(x: 10 + (self.gameData.gameButtonHeight * 0.5), y: 10 + (self.gameData.gameButtonHeight * 0.5))
         self.addChild(homeButton)
         
-        let shuffleButton = GameControlButton(size: CGSize(width: self.gameData.gameButtonLength, height: self.gameData.gameButtonLength), type: .shuffle, texture: SKTexture(imageNamed: "shuffle.png"))
+        let shuffleButton = GameControlButton(size: CGSize(width: self.gameData.gameButtonHeight, height: self.gameData.gameButtonHeight), type: .shuffle, texture: SKTexture(imageNamed: "shuffle.png"))
         shuffleButton.delegate = self
-        shuffleButton.position = CGPoint(x: self.gameData.width - 10 - Double(self.gameData.gameButtonLength * 1.5), y: 10 + Double(self.gameData.gameButtonLength * 0.5))
+        shuffleButton.position = CGPoint(x: self.gameData.width - 10 - Double(self.gameData.gameButtonHeight * 1.5), y: 10 + Double(self.gameData.gameButtonHeight * 0.5))
         self.addChild(shuffleButton)
         
-        let solveButton = GameControlButton(size: CGSize(width: self.gameData.gameButtonLength, height: self.gameData.gameButtonLength), type: .solve, texture: SKTexture(imageNamed: "solve.png"))
+        let solveButton = GameControlButton(size: CGSize(width: self.gameData.gameButtonHeight, height: self.gameData.gameButtonHeight), type: .solve, texture: SKTexture(imageNamed: "solve.png"))
         solveButton.delegate = self
-        solveButton.position = CGPoint(x: self.gameData.width - 10 - Double(self.gameData.gameButtonLength * 0.5), y: 10 + Double(self.gameData.gameButtonLength * 0.5))
+        solveButton.position = CGPoint(x: self.gameData.width - 10 - Double(self.gameData.gameButtonHeight * 0.5), y: 10 + Double(self.gameData.gameButtonHeight * 0.5))
         self.addChild(solveButton)
     }
     
@@ -315,11 +333,12 @@ extension GameScene: GameControlButtonDelegate, GameHelpButtonDelegate {
         self.moves = 0
         self.movesLabel.text = "Moves: \(self.moves)"
         
-        // Make sure the shuffle don't solve it
+        // Make sure it's impossible for the outcome to be solved
         safe.solve(duration: 0)
         
         self.innerCircle.fillColor = self.gameData.centerColor
         safe.shuffle()
+        self.playSound(fileName: "shuffle_t");
         self.solved = false
     }
     
@@ -360,9 +379,5 @@ extension GameScene {
     
     public override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches { touchUp(atPoint: t.location(in: self)) }
-    }
-    
-    public override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
     }
 }
