@@ -13,9 +13,9 @@ public class GameScene: SKScene {
     private var isViewChanged: Bool
     
     private var audioPlayer: AVAudioPlayer?
-    private var helpColumn: Int?
     private var safe: Safe?
     private var activeLayer: CircleLayer?
+    private var helpColumn: Int?
     
     private var p1 = CGPoint()
     private var p2 = CGPoint()
@@ -48,40 +48,6 @@ public class GameScene: SKScene {
     
     public override func didMove(to view: SKView) {
         self.setup()
-        
-        guard let safe = self.safe else {
-            return
-        }
-        
-        let maxPossibleValue = Int(pow(2, Double(self.gameData.layers)))
-        
-        var code = [Int]()
-        var startDegree: Double = 0
-        for iPiece in 0..<self.gameData.pieces {
-            let codeNumber: Int = Int.random(in: 0..<maxPossibleValue)
-            let codeArray = self.intToBinaryCharArray(int: codeNumber, amountOfChars: self.gameData.layers)
-            code.append(codeNumber)
-            
-            let shiftedAngle = startDegree.toRadians + Double(self.gameData.radianRange) * 0.5
-            let radius = self.gameData.innerRadius * (Double(self.gameData.layers) + 1.5)
-            let xCord = cos(shiftedAngle) * radius
-            let yCord = sin(shiftedAngle) * radius
-            let position = CGPoint(x: CGFloat(xCord) + self.gameData.center.x, y: CGFloat(yCord) + self.gameData.center.y)
-            
-            let size = sqrt(self.gameData.innerRadius * self.gameData.innerRadius * 0.5)
-            let helpButton = GameHelpButton(size: CGSize(width: size, height: size), text: String(codeNumber), column: iPiece, degree: shiftedAngle.toDegrees)
-            helpButton.delegate = self
-            helpButton.position = position
-            self.addChild(helpButton)
-            
-            var codeIndex = 0
-            for iLayer in (0..<self.gameData.layers).reversed() {
-                safe.getLayer(iLayer).getPiece(iPiece).setText(String(codeArray[codeIndex]))
-                codeIndex += 1
-            }
-            startDegree += self.gameData.degreeRange
-        }
-        safe.setCode(code)
     }
     
     func touchDown(atPoint pos : CGPoint) {
@@ -138,36 +104,22 @@ public class GameScene: SKScene {
     
     // MARK: private
     
-    private func playSound(fileName: String) {
-        guard let url = Bundle.main.url(forResource: fileName, withExtension: "m4a") else {
-            return
-        }
-        
-        do {
-            self.audioPlayer = try AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileType.m4a.rawValue)
-            guard let audioPlayer = self.audioPlayer else {
-                return
-            }
-            audioPlayer.play()
-        } catch let error {
-            print(error)
-        }
-    }
-    
     private func setup() {
         self.backgroundColor = .white
         
-        let movesLabel_position = CGPoint(x: 10, y: self.gameData.height - Double(self.gameData.fontSizeMedium))
-        self.setupLabel(label: self.movesLabel, position: movesLabel_position, fontSize: self.gameData.fontSizeMedium, text: "Moves: \(self.moves)", hAlignment: .left)
+        let movesLabel_position = CGPoint(x: 10, y: self.gameData.height - Double(FontSize.medium))
+        self.setupLabel(label: self.movesLabel, position: movesLabel_position, fontSize: FontSize.medium, text: "Moves: \(self.moves)", hAlignment: .left)
         
-        let helpLabel_position = CGPoint(x: 10, y: self.gameData.height - Double(self.gameData.fontSizeLarge * 2.5))
-        self.setupLabel(label: self.helpLabel, position: helpLabel_position, fontSize: self.gameData.fontSizeLarge, text: "", hAlignment: .left)
+        let helpLabel_position = CGPoint(x: 10, y: self.gameData.height - Double(FontSize.medium * 2.5))
+        self.setupLabel(label: self.helpLabel, position: helpLabel_position, fontSize: FontSize.large, text: "", hAlignment: .left)
         
         self.setupInnerCircle()
         
         self.setupButtons()
         
         self.setupSafe()
+        
+        self.setupCode()
     }
     
     private func setupLabel(label: SKLabelNode, position: CGPoint, fontSize: CGFloat, text: String, hAlignment: SKLabelHorizontalAlignmentMode) {
@@ -185,25 +137,25 @@ public class GameScene: SKScene {
         self.innerCircle.position = self.gameData.center
         self.innerCircle.zPosition = 1
         self.innerCircle.lineWidth = self.gameData.lineWidth
-        self.innerCircle.strokeColor = self.gameData.borderColor
-        self.innerCircle.fillColor = self.gameData.centerColor
+        self.innerCircle.strokeColor = Color.border
+        self.innerCircle.fillColor = Color.center
         self.addChild(self.innerCircle)
     }
     
     private func setupButtons() {
-        let homeButton = GameControlButton(size: CGSize(width: self.gameData.gameButtonHeight, height: self.gameData.gameButtonHeight), type: .home, texture: SKTexture(imageNamed: "home.png"))
+        let homeButton = GameControlButton(size: CGSize(width: Size.gameButton.width, height: Size.gameButton.height), type: .home, texture: SKTexture(imageNamed: "home.png"))
         homeButton.delegate = self
-        homeButton.position = CGPoint(x: 10 + (self.gameData.gameButtonHeight * 0.5), y: 10 + (self.gameData.gameButtonHeight * 0.5))
+        homeButton.position = CGPoint(x: 10 + (Size.gameButton.width * 0.5), y: 10 + (Size.gameButton.width * 0.5))
         self.addChild(homeButton)
         
-        let shuffleButton = GameControlButton(size: CGSize(width: self.gameData.gameButtonHeight, height: self.gameData.gameButtonHeight), type: .shuffle, texture: SKTexture(imageNamed: "shuffle.png"))
+        let shuffleButton = GameControlButton(size: CGSize(width: Size.gameButton.width, height: Size.gameButton.height), type: .shuffle, texture: SKTexture(imageNamed: "shuffle.png"))
         shuffleButton.delegate = self
-        shuffleButton.position = CGPoint(x: self.gameData.width - 10 - Double(self.gameData.gameButtonHeight * 1.5), y: 10 + Double(self.gameData.gameButtonHeight * 0.5))
+        shuffleButton.position = CGPoint(x: self.gameData.width - 10 - Double(Size.gameButton.width * 1.5), y: 10 + Double(Size.gameButton.height * 0.5))
         self.addChild(shuffleButton)
         
-        let solveButton = GameControlButton(size: CGSize(width: self.gameData.gameButtonHeight, height: self.gameData.gameButtonHeight), type: .solve, texture: SKTexture(imageNamed: "solve.png"))
+        let solveButton = GameControlButton(size: CGSize(width: Size.gameButton.width, height: Size.gameButton.height), type: .solve, texture: SKTexture(imageNamed: "solve.png"))
         solveButton.delegate = self
-        solveButton.position = CGPoint(x: self.gameData.width - 10 - Double(self.gameData.gameButtonHeight * 0.5), y: 10 + Double(self.gameData.gameButtonHeight * 0.5))
+        solveButton.position = CGPoint(x: self.gameData.width - 10 - Double(Size.gameButton.width * 0.5), y: 10 + Double(Size.gameButton.height * 0.5))
         self.addChild(solveButton)
     }
     
@@ -233,8 +185,45 @@ public class GameScene: SKScene {
         
         let safe = Safe(gameData: self.gameData, layers: layers)
         safe.shuffle()
+        self.playSound(fileName: "shuffle")
         
         self.safe = safe
+    }
+    
+    private func setupCode() {
+        guard let safe = self.safe else {
+            return
+        }
+        
+        let maxPossibleValue = Int(pow(2, Double(self.gameData.layers)))
+        
+        var code = [Int]()
+        var startDegree: Double = 0
+        for iPiece in 0..<self.gameData.pieces {
+            let codeNumber: Int = Int.random(in: 0..<maxPossibleValue)
+            let codeArray = self.intToBinaryCharArray(int: codeNumber, amountOfChars: self.gameData.layers)
+            code.append(codeNumber)
+            
+            let shiftedAngle = startDegree.toRadians + Double(self.gameData.radianRange) * 0.5
+            let radius = self.gameData.innerRadius * (Double(self.gameData.layers) + 1.5)
+            let xCord = cos(shiftedAngle) * radius
+            let yCord = sin(shiftedAngle) * radius
+            let position = CGPoint(x: CGFloat(xCord) + self.gameData.center.x, y: CGFloat(yCord) + self.gameData.center.y)
+            
+            let size = sqrt(self.gameData.innerRadius * self.gameData.innerRadius * 0.5)
+            let helpButton = GameHelpButton(size: CGSize(width: size, height: size), text: String(codeNumber), column: iPiece, degree: shiftedAngle.toDegrees)
+            helpButton.delegate = self
+            helpButton.position = position
+            self.addChild(helpButton)
+            
+            var codeIndex = 0
+            for iLayer in (0..<self.gameData.layers).reversed() {
+                safe.getLayer(iLayer).getPiece(iPiece).setText(String(codeArray[codeIndex]))
+                codeIndex += 1
+            }
+            startDegree += self.gameData.degreeRange
+        }
+        safe.setCode(code)
     }
     
     private func updateActiveLayer(touchedPos pos: CGPoint) {
@@ -297,6 +286,22 @@ public class GameScene: SKScene {
         }
     }
     
+    private func playSound(fileName: String) {
+        guard let url = Bundle.main.url(forResource: fileName, withExtension: "m4a") else {
+            return
+        }
+        
+        do {
+            self.audioPlayer = try AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileType.m4a.rawValue)
+            guard let audioPlayer = self.audioPlayer else {
+                return
+            }
+            audioPlayer.play()
+        } catch let error {
+            print(error)
+        }
+    }
+    
     private func distanceBetweenCGPoints(from: CGPoint, to: CGPoint) -> CGFloat {
         return sqrt(distanceBetweenCGPointsSquared(from: from, to: to))
     }
@@ -336,9 +341,9 @@ extension GameScene: GameControlButtonDelegate, GameHelpButtonDelegate {
         // Make sure it's impossible for the outcome to be solved
         safe.solve(duration: 0)
         
-        self.innerCircle.fillColor = self.gameData.centerColor
+        self.innerCircle.fillColor = Color.center
         safe.shuffle()
-        self.playSound(fileName: "shuffle_t");
+        self.playSound(fileName: "shuffle");
         self.solved = false
     }
     

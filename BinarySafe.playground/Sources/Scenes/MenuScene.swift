@@ -37,9 +37,9 @@ public class MenuScene: SKScene {
         title.position = CGPoint(x: Double(self.gameData.center.x), y: self.gameData.height - 10 - Double(self.gameData.titleSize.height * 0.5))
         self.addChild(title)
         
-        let itemSize = CGSize(width: self.gameData.width * 0.6, height: Double(self.gameData.gameButtonHeight))
+        let itemSize = CGSize(width: self.gameData.width * 0.6, height: Double(Size.gameButton.height))
         
-        let layersLabelOrigin = CGPoint(x: self.gameData.width * 0.2, y: Double(self.gameData.gameButtonHeight * 2))
+        let layersLabelOrigin = CGPoint(x: self.gameData.width * 0.2, y: Double(Size.gameButton.height * 2))
         let layersLabel_frame = CGRect(origin: layersLabelOrigin, size: itemSize)
         let layersLabel = UILabel(frame: layersLabel_frame)
         layersLabel.textAlignment = .center
@@ -47,13 +47,13 @@ public class MenuScene: SKScene {
         view.addSubview(layersLabel)
         self.layersLabel = layersLabel
         
-        let layersSliderOrigin = CGPoint(x: self.gameData.width * 0.2, y: Double(self.gameData.gameButtonHeight * 2.5))
+        let layersSliderOrigin = CGPoint(x: self.gameData.width * 0.2, y: Double(Size.gameButton.height * 2.5))
         let layersSlider_frame = CGRect(origin: layersSliderOrigin, size: itemSize)
         let layersSlider = self.newSlider(frame: layersSlider_frame, minValue: 2, maxValue: 6, value: Float(self.gameData.layers))// TODO: maybe min and max value in gameData
         layersSlider.addTarget(self, action: #selector(changeLayersValue(_:)), for: .valueChanged)
         view.addSubview(layersSlider)
         
-        let piecesLabelOrigin = CGPoint(x: self.gameData.width * 0.2, y: Double(self.gameData.gameButtonHeight * 3.5))
+        let piecesLabelOrigin = CGPoint(x: self.gameData.width * 0.2, y: Double(Size.gameButton.height * 3.5))
         let piecesLabel_frame = CGRect(origin: piecesLabelOrigin, size: itemSize)
         let piecesLabel = UILabel(frame: piecesLabel_frame)
         piecesLabel.textAlignment = .center
@@ -61,7 +61,7 @@ public class MenuScene: SKScene {
         view.addSubview(piecesLabel)
         self.piecesLabel = piecesLabel
         
-        let piecesSliderOrigin = CGPoint(x: self.gameData.width * 0.2, y: Double(self.gameData.gameButtonHeight * 4))
+        let piecesSliderOrigin = CGPoint(x: self.gameData.width * 0.2, y: Double(Size.gameButton.height * 4))
         let piecesSlider_frame = CGRect(origin: piecesSliderOrigin, size: itemSize)
         let piecesSlider = self.newSlider(frame: piecesSlider_frame, minValue: 3, maxValue: 10, value: Float(self.gameData.pieces))// TODO: maybe min and max value in gameData
         piecesSlider.addTarget(self, action: #selector(changePiecesValue(_:)), for: .valueChanged)
@@ -132,7 +132,7 @@ extension MenuScene: GameControlButtonDelegate {
             return
         }
         view.subviews.forEach({ $0.removeFromSuperview() })
-        view.presentScene(GameScene(self.gameData), transition: SKTransition.crossFade(withDuration: 1))
+        view.presentScene(GameScene(self.gameData), transition: SKTransition.crossFade(withDuration: 0))
         self.isViewChanged = true
     }
 }

@@ -11,22 +11,6 @@ public class Safe {
         self.code = [Int]()
     }
     
-    public func resetFillColor() {
-        for i in 0..<self.layers.count {
-            self.layers[i].setFillColor(color: self.gameData.fillColor)
-        }
-    }
-    
-    public func setCode(_ code: [Int]) {
-        self.code = code
-    }
-    
-    public func solve(duration: Double) {
-        for i in 0..<self.layers.count {
-            self.layers[i].solve(duration: duration)
-        }
-    }
-    
     public func getCodeWithKeyFromColumn(_ column: Int) -> String {
         var code = ""
         for iLayer in (0..<self.gameData.layers).reversed() {
@@ -68,7 +52,6 @@ public class Safe {
                 solved = false
             }
         }
-        print("")
         
         return solved
     }
@@ -85,10 +68,26 @@ public class Safe {
         }
     }
     
+    public func resetFillColor() {
+        for i in 0..<self.layers.count {
+            self.layers[i].setFillColor(color: Color.fill)
+        }
+    }
+    
+    public func solve(duration: Double) {
+        for i in 0..<self.layers.count {
+            self.layers[i].solve(duration: duration)
+        }
+    }
+    
     public func snap() {
         for i in 0..<self.layers.count {
             self.layers[i].snap()
         }
+    }
+    
+    public func setCode(_ code: [Int]) {
+        self.code = code
     }
     
     public func getLayer(_ layer: Int) -> CircleLayer {

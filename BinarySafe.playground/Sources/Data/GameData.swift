@@ -12,16 +12,6 @@ public struct GameData {
         self.pieces = 4
     }
     
-    public let borderColor: SKColor = UIColor.black
-    public let arrowColor: SKColor = UIColor.black
-    public let fillColor: SKColor = UIColor(displayP3Red: 0.85, green: 0.85, blue: 0.85, alpha: 1)
-    public let centerColor: SKColor = UIColor(displayP3Red: 0.5, green: 0.5, blue: 0.5, alpha: 1)
-    
-    public let fontSizeSmall: CGFloat = 20
-    public let fontSizeMedium: CGFloat = 25
-    public let fontSizeLarge: CGFloat = 30
-    public let gameButtonHeight: CGFloat = 60
-    
     public var width: Double
     public var height: Double
     public var layers: Int

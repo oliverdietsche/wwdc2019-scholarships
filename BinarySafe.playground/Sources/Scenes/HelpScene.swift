@@ -49,7 +49,7 @@ public class HelpScene: SKScene {
     
     private func newParagraphLabel(text: String, width: CGFloat, position: CGPoint) -> SKLabelNode {
         let label = SKLabelNode(fontNamed: "Arial")
-        label.fontSize = self.gameData.fontSizeSmall
+        label.fontSize = FontSize.small
         label.fontColor = UIColor.black
         label.verticalAlignmentMode = .top
         label.lineBreakMode = NSLineBreakMode.byWordWrapping
@@ -73,6 +73,6 @@ extension HelpScene: GameControlButtonDelegate {
         guard let view = self.view else {
             return
         }
-        view.presentScene(GameScene(self.gameData), transition: SKTransition.crossFade(withDuration: 1))
+        view.presentScene(GameScene(self.gameData), transition: SKTransition.crossFade(withDuration: 0))
     }
 }

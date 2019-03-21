@@ -25,8 +25,17 @@ public class CirclePiece {
         self.circleArc.addChild(arrow)
     }
     
+    public func rotate(angle: CGFloat) {
+        self.abortAllActions()
+        self.doRotateAction(angle: angle, duration: 0)
+    }
+    
     public func setFillColor(color: SKColor) {
         self.circleArc.fillColor = color
+    }
+    
+    public func shuffle(angle: CGFloat, duration: Double) {
+        self.doRotateAction(angle: angle, duration: duration)
     }
     
     public func solve(duration: Double) {
@@ -45,23 +54,6 @@ public class CirclePiece {
         self.label.zRotation = self.gameData.radianRange * CGFloat(self.rotationIndex) * -1
     }
     
-    public func shuffle(angle: CGFloat, duration: Double) {
-        self.doRotateAction(angle: angle, duration: duration)
-    }
-    
-    public func rotate(angle: CGFloat) {
-        self.abortAllActions()
-        self.doRotateAction(angle: angle, duration: 0)
-    }
-    
-    public func getRotationIndex() -> Int {
-        return self.rotationIndex
-    }
-    
-    public func getCircleArc() -> SKShapeNode? {
-        return self.circleArc
-    }
-    
     public func setText(_ text: String) {
         self.label.text = text
     }
@@ -73,12 +65,15 @@ public class CirclePiece {
         return text
     }
     
-    // MARK: private
-    
-    private func abortAllActions() {
-        self.circleArc.removeAllActions()
-        self.label.removeAllActions()
+    public func getRotationIndex() -> Int {
+        return self.rotationIndex
     }
+    
+    public func getCircleArc() -> SKShapeNode? {
+        return self.circleArc
+    }
+    
+    // MARK: private
     
     // Returns zRotation of a SKShapeNode with a value between 0 and π * 2
     private func getConvertedZRotation(shapeNode: SKShapeNode) -> CGFloat {
@@ -119,8 +114,8 @@ public class CirclePiece {
         arc.close()
         
         let circle = SKShapeNode()
-        circle.fillColor = self.gameData.fillColor
-        circle.strokeColor = self.gameData.borderColor
+        circle.fillColor = Color.fill
+        circle.strokeColor = Color.border
         circle.lineWidth = self.gameData.lineWidth
         circle.path = arc.cgPath
         circle.position = self.gameData.center
@@ -165,13 +160,19 @@ public class CirclePiece {
         path.addLine(to: CGPoint(x: length * -1, y: 0 + marginBottom))
 
         let arrow = SKShapeNode(path: path.cgPath)
-        arrow.fillColor = self.gameData.arrowColor
-        arrow.zPosition = 1
+        arrow.fillColor = Color.arrow
         arrow.lineWidth = 0
+        arrow.zPosition = 1
         arrow.position = posPoint
+        // zRotation gets corrected, because the unit circle starts with 90 degree on the top
         arrow.zRotation = CGFloat(shiftedAngle) - (GeometryData.fullRadianOfCircle * 0.25)
 
         return arrow
+    }
+    
+    private func abortAllActions() {
+        self.circleArc.removeAllActions()
+        self.label.removeAllActions()
     }
     
     //    private func createArrowLine(angle: Double) -> SKShapeNode {
