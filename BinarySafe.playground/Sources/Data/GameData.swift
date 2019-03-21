@@ -42,11 +42,20 @@ public struct GameData {
             }
             height = width * 0.33
             
-//            var height = (self.width * 0.5 - 15) * 0.33
-//            if height > self.height * 0.25 {
-//                height = self.height * 0.25 - 20
-//            }
-//            let width = height * 3
+            return CGSize(width: width, height: height)
+        }
+    }
+    
+    public var imageSize: CGSize {
+        get {
+            var height: Double
+            if self.width > 700 {
+                height = self.height * 0.5
+            } else {
+                height = self.height * 0.3
+            }
+            let width = height * 0.8125
+            
             return CGSize(width: width, height: height)
         }
     }

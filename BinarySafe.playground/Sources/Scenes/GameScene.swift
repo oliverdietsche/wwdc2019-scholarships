@@ -110,7 +110,7 @@ public class GameScene: SKScene {
         let movesLabel_position = CGPoint(x: 10, y: self.gameData.height - Double(FontSize.medium))
         self.setupLabel(label: self.movesLabel, position: movesLabel_position, fontSize: FontSize.medium, text: "Moves: \(self.moves)", hAlignment: .left)
         
-        let helpLabel_position = CGPoint(x: 10, y: self.gameData.height - Double(FontSize.medium * 2.5))
+        let helpLabel_position = CGPoint(x: 10 + 50, y: self.gameData.height - Double(FontSize.medium * 2.5) - 100)
         self.setupLabel(label: self.helpLabel, position: helpLabel_position, fontSize: FontSize.large, text: "", hAlignment: .left)
         
         self.setupInnerCircle()
