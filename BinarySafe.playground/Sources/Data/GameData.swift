@@ -19,17 +19,34 @@ public struct GameData {
     
     public var titleSize: CGSize {
         get {
-            return CGSize(width: self.width * 0.9, height: self.width * 0.18)
+            var height: Double
+            var width: Double
+            if self.width > self.height {
+                width = self.width * 0.5 - 10
+            } else {
+                width = self.width - 20
+            }
+            height = width * 0.2
+            return CGSize(width: width, height: height)
         }
     }
     
     public var menuButtonSize: CGSize {
         get {
-            var height = (self.width * 0.5 - 15) * 0.33
-            if height > self.height * 0.25 {
-                height = self.height * 0.25 - 20
+            var height: Double
+            var width: Double
+            if self.width > self.height {
+                width = self.width * 0.25 - 15
+            } else {
+                width = self.width * 0.5 - 15
             }
-            let width = height * 3
+            height = width * 0.33
+            
+//            var height = (self.width * 0.5 - 15) * 0.33
+//            if height > self.height * 0.25 {
+//                height = self.height * 0.25 - 20
+//            }
+//            let width = height * 3
             return CGSize(width: width, height: height)
         }
     }

@@ -33,15 +33,27 @@ public class HelpScene: SKScene {
         let description = self.newParagraphLabel(text: descriptionText, width: CGFloat(self.gameData.width * 0.9), position: descriptionPosition)
         self.addChild(description)
         
+        var imagePosition: CGPoint
+        var playButtonPosition: CGPoint
+        if self.gameData.width > self.gameData.height {
+            imagePosition = CGPoint(x: 10 + Double(self.gameData.menuButtonSize.width * 0.5), y: self.gameData.height - 10 - Double(self.gameData.menuButtonSize.height * 0.5))
+            playButtonPosition = CGPoint(x: self.gameData.width - 10 - Double(self.gameData.menuButtonSize.width * 0.5), y: self.gameData.height - 10 - Double(self.gameData.menuButtonSize.height * 0.5))
+            description.fontSize = FontSize.tiny
+        } else {
+            imagePosition = CGPoint(x: self.gameData.menuButtonSize.width * 0.5 + 10, y: 10 + self.gameData.menuButtonSize.height * 0.5)
+            playButtonPosition = CGPoint(x: CGFloat(self.gameData.width) - 10 - self.gameData.menuButtonSize.width * 0.5, y: 10 + self.gameData.menuButtonSize.height * 0.5)
+            description.fontSize = FontSize.small
+        }
+        
         let image = SKShapeNode(rectOf: self.gameData.menuButtonSize)
         image.fillColor = .white
         image.fillTexture = SKTexture(imageNamed: "100binary_example.png")
-        image.position = CGPoint(x: self.gameData.menuButtonSize.width * 0.5 + 10, y: 10 + self.gameData.menuButtonSize.height * 0.5)
+        image.position = imagePosition
         self.addChild(image)
         
         let playButton = GameControlButton(size: self.gameData.menuButtonSize, type: .play, texture: SKTexture(imageNamed: "play.png"))
         playButton.delegate = self
-        playButton.position = CGPoint(x: CGFloat(self.gameData.width) - 10 - self.gameData.menuButtonSize.width * 0.5, y: 10 + self.gameData.menuButtonSize.height * 0.5)
+        playButton.position = playButtonPosition
         self.addChild(playButton)
     }
     

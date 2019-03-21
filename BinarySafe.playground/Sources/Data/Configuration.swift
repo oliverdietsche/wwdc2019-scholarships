@@ -9,6 +9,7 @@ struct Color {
 }
 
 struct FontSize {
+    static let tiny: CGFloat = 15
     static let small: CGFloat = 20
     static let medium: CGFloat = 25
     static let large: CGFloat = 30
