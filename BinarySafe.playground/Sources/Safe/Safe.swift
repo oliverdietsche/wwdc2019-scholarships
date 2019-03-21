@@ -22,7 +22,7 @@ public class Safe {
             
             let piece = layers[iLayer].getPiece(pieceIndex)
             code += piece.getText()
-            piece.setFillColor(color: .yellow)
+            piece.setFillColor(color: Color.highlighted)
         }
         guard let calculatedKey = Int(code, radix: 2) else {
             return ""

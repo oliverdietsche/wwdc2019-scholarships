@@ -114,11 +114,8 @@ public class GameScene: SKScene {
         self.setupLabel(label: self.helpLabel, position: helpLabel_position, fontSize: FontSize.large, text: "", hAlignment: .left)
         
         self.setupInnerCircle()
-        
         self.setupButtons()
-        
         self.setupSafe()
-        
         self.setupCode()
     }
     

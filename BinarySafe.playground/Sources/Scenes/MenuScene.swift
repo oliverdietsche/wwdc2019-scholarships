@@ -49,7 +49,7 @@ public class MenuScene: SKScene {
         
         let layersSliderOrigin = CGPoint(x: self.gameData.width * 0.2, y: Double(Size.gameButton.height * 2.5))
         let layersSlider_frame = CGRect(origin: layersSliderOrigin, size: itemSize)
-        let layersSlider = self.newSlider(frame: layersSlider_frame, minValue: 2, maxValue: 6, value: Float(self.gameData.layers))// TODO: maybe min and max value in gameData
+        let layersSlider = self.newSlider(frame: layersSlider_frame, minValue: Config.layersMinValue, maxValue: Config.layersMaxValue, value: Float(self.gameData.layers))// TODO: maybe min and max value in gameData
         layersSlider.addTarget(self, action: #selector(changeLayersValue(_:)), for: .valueChanged)
         view.addSubview(layersSlider)
         
@@ -63,7 +63,7 @@ public class MenuScene: SKScene {
         
         let piecesSliderOrigin = CGPoint(x: self.gameData.width * 0.2, y: Double(Size.gameButton.height * 4))
         let piecesSlider_frame = CGRect(origin: piecesSliderOrigin, size: itemSize)
-        let piecesSlider = self.newSlider(frame: piecesSlider_frame, minValue: 3, maxValue: 10, value: Float(self.gameData.pieces))// TODO: maybe min and max value in gameData
+        let piecesSlider = self.newSlider(frame: piecesSlider_frame, minValue: Config.piecesMinValue, maxValue: Config.piecesMaxValue, value: Float(self.gameData.pieces))// TODO: maybe min and max value in gameData
         piecesSlider.addTarget(self, action: #selector(changePiecesValue(_:)), for: .valueChanged)
         view.addSubview(piecesSlider)
         
