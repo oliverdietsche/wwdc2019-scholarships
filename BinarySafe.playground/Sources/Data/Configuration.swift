@@ -6,6 +6,7 @@ struct Color {
     static let fill: SKColor = SKColor(red: 0.85, green: 0.85, blue: 0.85, alpha: 1)
     static let center: SKColor = SKColor(red: 0.50, green: 0.50, blue: 0.50, alpha: 1)
     static let highlighted: SKColor = SKColor(red: 0.69, green: 0.99, blue: 1.00, alpha: 1.0)
+    static let win: SKColor = SKColor(red: 0.10, green: 0.54, blue: 0, alpha: 1.0)
 }
 
 struct FontSize {
@@ -17,6 +18,7 @@ struct FontSize {
 
 struct Size {
     static let gameButton: CGSize = CGSize(width: 60, height: 60)
+    static let cross: CGSize = CGSize(width: 40, height: 40)
 }
 
 struct Config {

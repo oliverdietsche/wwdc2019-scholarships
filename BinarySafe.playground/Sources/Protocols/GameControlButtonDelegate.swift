@@ -6,6 +6,6 @@ import Foundation
     @objc optional func loadHomeScene()
     @objc optional func solveLayers()
     @objc optional func loadHelpScene()
-    @objc optional func showHelp()
-    @objc optional func hideHelp()
+    @objc optional func showInfo()
+    @objc optional func hideInfo()
 }
