@@ -17,24 +17,6 @@ public struct GameData {
     public var layers: Int
     public var pieces: Int
     
-    public var infoOverlayRect: CGRect {
-        get {
-            return CGRect(x: 10, y: 10, width: self.width - 20, height: self.height - 20)
-        }
-    }
-    
-    public var crossPosition: CGPoint {
-        get {
-            return CGPoint(x: self.width - 20 - Double(Size.cross.width * 0.5), y: self.height - 20 - Double(Size.cross.height * 0.5))
-        }
-    }
-    
-    public var infoLabelPosition: CGPoint {
-        get {
-            return CGPoint(x: self.center.x, y: CGFloat(self.height) - Size.cross.height - 30)
-        }
-    }
-    
     public var titleSize: CGSize {
         get {
             var height: Double

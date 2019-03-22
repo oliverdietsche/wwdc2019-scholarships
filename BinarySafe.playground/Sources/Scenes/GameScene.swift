@@ -4,7 +4,6 @@ import AVFoundation
 public class GameScene: SKScene {
     private var gameData: GameData
     private var innerCircle: SKShapeNode
-    private var infoOverlay: SKShapeNode
     private var helpLabel: SKLabelNode
     private var movesLabel: SKLabelNode
     private var winLabel: SKLabelNode
@@ -13,7 +12,6 @@ public class GameScene: SKScene {
     private var isSolved: Bool
     private var isLayerSelected: Bool
     private var isViewChanged: Bool
-    private var isInfoActive: Bool
     
     private var audioPlayer: AVAudioPlayer?
     private var safe: Safe?
@@ -30,7 +28,6 @@ public class GameScene: SKScene {
     public init(_ gameData: GameData) {
         self.gameData = gameData
         self.innerCircle = SKShapeNode(circleOfRadius: CGFloat(gameData.innerRadius))
-        self.infoOverlay = SKShapeNode(rect: gameData.infoOverlayRect)
         self.helpLabel = SKLabelNode(fontNamed: "Arial")
         self.movesLabel = SKLabelNode(fontNamed: "Arial")
         self.winLabel = SKLabelNode(fontNamed: "Optima-ExtraBlack")
@@ -39,7 +36,6 @@ public class GameScene: SKScene {
         self.isSolved = false
         self.isLayerSelected = false
         self.isViewChanged = false
-        self.isInfoActive = false
         
         super.init(size: CGSize(width: gameData.width, height: gameData.height))
     }
@@ -57,10 +53,6 @@ public class GameScene: SKScene {
     }
     
     func touchDown(atPoint pos : CGPoint) {
-        if self.isInfoActive {
-            self.infoOverlay.zPosition = -1
-            self.isInfoActive = false
-        }
         if self.isSolved {
             return
         }
@@ -78,10 +70,8 @@ public class GameScene: SKScene {
             return
         }
         if self.isSolved || safe.hasActions() {
-            self.helpLabel.text = "return because of action or already solved"
             return
         }
-        self.movesLabel.text = "no return"
         self.p2 = pos
         
         guard let activeLayer = self.activeLayer, self.isLayerSelected else {
@@ -143,7 +133,6 @@ public class GameScene: SKScene {
         self.setupButtons()
         self.setupSafe()
         self.setupCode()
-        self.setupInfoOverlay()
     }
     
     private func addBackground() {
@@ -178,11 +167,6 @@ public class GameScene: SKScene {
         homeButton.delegate = self
         homeButton.position = CGPoint(x: 10 + (Size.gameButton.width * 0.5), y: 10 + (Size.gameButton.width * 0.5))
         self.addChild(homeButton)
-        
-        let infoButton = GameControlButton(size: Size.gameButton, type: .info, texture: SKTexture(imageNamed: "info"))
-        infoButton.delegate = self
-        infoButton.position = CGPoint(x: 20 + (Size.gameButton.width * 1.5), y: 10 + (Size.gameButton.width * 0.5))
-        self.addChild(infoButton)
         
         let shuffleButton = GameControlButton(size: Size.gameButton, type: .shuffle, texture: SKTexture(imageNamed: "shuffle.png"))
         shuffleButton.delegate = self
@@ -260,34 +244,6 @@ public class GameScene: SKScene {
             startDegree += self.gameData.degreeRange
         }
         safe.setCode(code)
-    }
-    
-    private func setupInfoOverlay() {
-        self.infoOverlay.fillColor = .white
-        self.infoOverlay.strokeColor = Color.border
-        self.infoOverlay.lineWidth = 3
-        self.infoOverlay.zPosition = -1
-        
-        let cross = SKShapeNode(rectOf: Size.cross)
-        cross.fillColor = .white
-        cross.fillTexture = SKTexture(imageNamed: "cross.png")
-        cross.position = self.gameData.crossPosition
-        self.infoOverlay.addChild(cross)
-        
-        let infoText = "Here you can read the instructions again:\nThe safe you have to solve consists of different layers and sections containing binary values. Rotate the layers until the binary code, read from the inside to the outside, results in the decimal shown on the outside of the safe.\nYou can check the current value of each section by pressing on the decimal and increase the difficulty by clicking on the home button to adjust the amount of layers and pieces. Choose help if you need further explanation. Enjoy!"
-        let infoPosition = self.gameData.infoLabelPosition
-        let infoLabel = self.newParagraphLabel(text: infoText, width: CGFloat(self.gameData.width) - 40, position: infoPosition)
-        self.infoOverlay.addChild(infoLabel)
-        
-        let imageHeight = self.gameData.height - 60 - Double(Size.cross.height + infoLabel.frame.height)
-        let imageWidth = imageHeight * 0.8125
-        let image = SKShapeNode(rectOf: CGSize(width: imageWidth, height: imageHeight))
-        image.fillColor = .white
-        image.fillTexture = SKTexture(imageNamed: "safe_example.png")
-        image.position = CGPoint(x: self.gameData.center.x, y: CGFloat(self.gameData.height - imageHeight * 0.5) - 40 - Size.cross.height - infoLabel.frame.height)
-        self.infoOverlay.addChild(image)
-        
-        self.addChild(self.infoOverlay)
     }
     
     private func newParagraphLabel(text: String, width: CGFloat, position: CGPoint) -> SKLabelNode {
@@ -447,11 +403,6 @@ extension GameScene: GameControlButtonDelegate, GameHelpButtonDelegate {
         self.movesLabel.text = "Auto-Solved"
         self.winLabel.text = "Auto-Solved"
         safe.solve(duration: 1.5)
-    }
-    
-    public func showInfo() {
-        self.isInfoActive = true
-        self.infoOverlay.zPosition = 10
     }
 }
 
