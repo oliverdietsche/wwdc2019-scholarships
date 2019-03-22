@@ -38,6 +38,13 @@ public class CirclePiece {
         self.doRotateAction(angle: angle, duration: duration)
     }
     
+    public func hasActions() -> Bool {
+        guard let circleArc = self.circleArc else {
+            return false
+        }
+        return circleArc.hasActions()
+    }
+    
     public func solve(duration: Double) {
         self.abortAllActions()
         self.doRotateAction(angle: self.getConvertedZRotation(shapeNode: self.circleArc) * -1, duration: duration)
@@ -71,13 +78,6 @@ public class CirclePiece {
     
     public func getCircleArc() -> SKShapeNode? {
         return self.circleArc
-    }
-    
-    public func hasActions() -> Bool {
-        guard let circleArc = self.circleArc else {
-            return false
-        }
-        return circleArc.hasActions()
     }
     
     // MARK: private

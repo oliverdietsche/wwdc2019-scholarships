@@ -30,6 +30,16 @@ public class CircleLayer {
         }
     }
     
+    public func hasActions() -> Bool {
+        var output = false
+        for i in 0..<self.circlePieces.count {
+            if self.circlePieces[i].hasActions() {
+                output = true
+            }
+        }
+        return output
+    }
+    
     public func solve(duration: Double) {
         for i in 0..<self.circlePieces.count {
             self.circlePieces[i].solve(duration: duration)
@@ -40,16 +50,6 @@ public class CircleLayer {
         for i in 0..<self.circlePieces.count {
             self.circlePieces[i].snap()
         }
-    }
-    
-    public func hasActions() -> Bool {
-        var output = false
-        for i in 0..<self.circlePieces.count {
-            if self.circlePieces[i].hasActions() {
-                output = true
-            }
-        }
-        return output
     }
     
     public func getRotationIndex() -> Int {

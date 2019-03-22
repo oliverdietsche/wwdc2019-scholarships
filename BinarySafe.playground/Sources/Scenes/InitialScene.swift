@@ -28,7 +28,7 @@ public class InitialScene: SKScene {
         title.position = CGPoint(x: Double(self.gameData.center.x), y: self.gameData.height - 10 - Double(self.gameData.titleSize.height * 0.5))
         self.addChild(title)
         
-        let descriptionText = "Welcome to the Binary-Safe!\nThe safe you have to solve consists of different layers and sections containing binary values. Rotate the layers until the binary code, read from the inside to the outside, results in the decimal shown on the outside of the safe.\nYou can check the current value of each section by pressing on the decimal. Choose help if you need further explanation. Enjoy!"
+        let descriptionText = "Welcome to the Binary-Safe!\nThe safe you have to solve consists of different layers and sections containing binary values. Rotate the layers until the binary code, read from the inside to the outside, results in the decimal shown on the outside of the safe.\nYou can check the current value of each section by pressing on the decimal and increase the difficulty by clicking on the home button to adjust the amount of layers and pieces. Choose help if you need further explanation. Enjoy!"
         let descriptionPosition = CGPoint(x: self.gameData.center.x, y: CGFloat(self.gameData.height) - 20 - self.gameData.titleSize.height)
         let description = self.newParagraphLabel(text: descriptionText, width: CGFloat(self.gameData.width) - 20, position: descriptionPosition)
         self.addChild(description)
