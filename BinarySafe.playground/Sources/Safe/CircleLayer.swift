@@ -42,6 +42,16 @@ public class CircleLayer {
         }
     }
     
+    public func hasActions() -> Bool {
+        var output = false
+        for i in 0..<self.circlePieces.count {
+            if self.circlePieces[i].hasActions() {
+                output = true
+            }
+        }
+        return output
+    }
+    
     public func getRotationIndex() -> Int {
         if circlePieces.count > 0 {
             return circlePieces[0].getRotationIndex()

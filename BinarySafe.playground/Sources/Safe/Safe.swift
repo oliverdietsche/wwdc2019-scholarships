@@ -86,6 +86,16 @@ public class Safe {
         }
     }
     
+    public func hasActions() -> Bool {
+        var output = false
+        for i in 0..<self.layers.count {
+            if self.layers[i].hasActions() {
+                output = true
+            }
+        }
+        return output
+    }
+    
     public func setCode(_ code: [Int]) {
         self.code = code
     }

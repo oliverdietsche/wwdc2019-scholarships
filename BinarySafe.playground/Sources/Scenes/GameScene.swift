@@ -10,7 +10,7 @@ public class GameScene: SKScene {
     private var winLabel: SKLabelNode
     private var moves: Int
     private var touchDownRotationIndex: Int
-    private var solved: Bool
+    private var isSolved: Bool
     private var isLayerSelected: Bool
     private var isViewChanged: Bool
     private var isInfoActive: Bool
@@ -36,7 +36,7 @@ public class GameScene: SKScene {
         self.winLabel = SKLabelNode(fontNamed: "Optima-ExtraBlack")
         self.moves = 0
         self.touchDownRotationIndex = 0
-        self.solved = false
+        self.isSolved = false
         self.isLayerSelected = false
         self.isViewChanged = false
         self.isInfoActive = false
@@ -61,7 +61,11 @@ public class GameScene: SKScene {
             self.infoOverlay.zPosition = -1
             self.isInfoActive = false
         }
-        if solved {
+        
+        guard let safe = self.safe else {
+            return
+        }
+        if self.isSolved || safe.hasActions() {
             return
         }
         self.updateActiveLayer(touchedPos: pos)
@@ -74,7 +78,7 @@ public class GameScene: SKScene {
     }
     
     func touchMoved(toPoint pos : CGPoint) {
-        if solved {
+        if self.isSolved {
             return
         }
         self.p2 = pos
@@ -88,7 +92,7 @@ public class GameScene: SKScene {
     }
     
     func touchUp(atPoint pos : CGPoint) {
-        if solved {
+        if self.isSolved {
             return
         }
         guard let safe = self.safe else {
@@ -106,7 +110,7 @@ public class GameScene: SKScene {
         self.updateHelp()
         
         if safe.isSolved() {
-            self.solved = true
+            self.isSolved = true
             var movesText = "move"
             if moves > 1 { movesText = "moves" }
             self.winLabel.text = "You solved it in \(self.moves) \(movesText)"
@@ -124,7 +128,7 @@ public class GameScene: SKScene {
         let movesLabel_position = CGPoint(x: 10, y: self.gameData.height - Double(FontSize.medium))
         self.setupLabel(label: self.movesLabel, position: movesLabel_position, fontSize: FontSize.medium, text: "Moves: \(self.moves)", hAlignment: .left)
         
-        let helpLabel_position = CGPoint(x: 10 + 50, y: self.gameData.height - Double(FontSize.medium * 2.5) - 100)
+        let helpLabel_position = CGPoint(x: 10, y: self.gameData.height - Double(FontSize.medium * 2.5))
         self.setupLabel(label: self.helpLabel, position: helpLabel_position, fontSize: FontSize.large, text: "", hAlignment: .left)
         
         var winLabel_x = Size.gameButton.height * 1.5 + 20
@@ -174,7 +178,7 @@ public class GameScene: SKScene {
         homeButton.position = CGPoint(x: 10 + (Size.gameButton.width * 0.5), y: 10 + (Size.gameButton.width * 0.5))
         self.addChild(homeButton)
         
-        let infoButton = GameControlButton(size: Size.gameButton, type: .info, texture: SKTexture(imageNamed: "info"))
+        let infoButton = GameControlButton(size: Size.gameButton, type: .info, texture: SKTexture(imageNamed: "info_s"))
         infoButton.delegate = self
         infoButton.position = CGPoint(x: 20 + (Size.gameButton.width * 1.5), y: 10 + (Size.gameButton.width * 0.5))
         self.addChild(infoButton)
@@ -269,7 +273,7 @@ public class GameScene: SKScene {
         cross.position = self.gameData.crossPosition
         self.infoOverlay.addChild(cross)
         
-        let infoText = "Here you can read the instructions again.\nThe safe you have to solve consists of different layers and sections containing binary values. Rotate the layers until the binary code, read from the inside to the outside, results in the decimal shown on the outside of the safe.\nYou can check the current value of each section by pressing on the decimal. Choose help if you need further explanation. Enjoy!"
+        let infoText = "Here you can read the instructions again:\nThe safe you have to solve consists of different layers and sections containing binary values. Rotate the layers until the binary code, read from the inside to the outside, results in the decimal shown on the outside of the safe.\nYou can check the current value of each section by pressing on the decimal. Choose help if you need further explanation. Enjoy!"
         let infoPosition = self.gameData.infoLabelPosition
         let infoLabel = self.newParagraphLabel(text: infoText, width: CGFloat(self.gameData.width) - 40, position: infoPosition)
         self.infoOverlay.addChild(infoLabel)
@@ -393,7 +397,10 @@ public class GameScene: SKScene {
 
 extension GameScene: GameControlButtonDelegate, GameHelpButtonDelegate {
     public func displayHelp(column: Int) {
-        if self.helpColumn == column {
+        guard let safe = self.safe else {
+            return
+        }
+        if self.helpColumn == column || safe.hasActions() {
             self.helpColumn = nil
         } else {
             self.helpColumn = column
@@ -416,7 +423,7 @@ extension GameScene: GameControlButtonDelegate, GameHelpButtonDelegate {
         self.winLabel.text = ""
         safe.shuffle()
         self.playSound(fileName: "shuffle");
-        self.solved = false
+        self.isSolved = false
     }
     
     public func loadHomeScene() {
@@ -428,14 +435,14 @@ extension GameScene: GameControlButtonDelegate, GameHelpButtonDelegate {
     }
     
     public func solveLayers() {
-        if solved {
+        if self.isSolved {
             return
         }
         guard let safe = self.safe else {
             return
         }
         safe.resetFillColor()
-        self.solved = true
+        self.isSolved = true
         self.movesLabel.text = "Auto-Solved"
         self.winLabel.text = "Auto-Solved"
         safe.solve(duration: 1.5)

@@ -73,6 +73,13 @@ public class CirclePiece {
         return self.circleArc
     }
     
+    public func hasActions() -> Bool {
+        guard let circleArc = self.circleArc else {
+            return false
+        }
+        return circleArc.hasActions()
+    }
+    
     // MARK: private
     
     // Returns zRotation of a SKShapeNode with a value between 0 and π * 2
