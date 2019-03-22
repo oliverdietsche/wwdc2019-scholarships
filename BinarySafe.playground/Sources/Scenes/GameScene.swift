@@ -61,11 +61,7 @@ public class GameScene: SKScene {
             self.infoOverlay.zPosition = -1
             self.isInfoActive = false
         }
-        
-        guard let safe = self.safe else {
-            return
-        }
-        if self.isSolved || safe.hasActions() {
+        if self.isSolved {
             return
         }
         self.updateActiveLayer(touchedPos: pos)
@@ -78,7 +74,10 @@ public class GameScene: SKScene {
     }
     
     func touchMoved(toPoint pos : CGPoint) {
-        if self.isSolved {
+        guard let safe = self.safe else {
+            return
+        }
+        if self.isSolved || safe.hasActions() {
             return
         }
         self.p2 = pos
@@ -178,7 +177,7 @@ public class GameScene: SKScene {
         homeButton.position = CGPoint(x: 10 + (Size.gameButton.width * 0.5), y: 10 + (Size.gameButton.width * 0.5))
         self.addChild(homeButton)
         
-        let infoButton = GameControlButton(size: Size.gameButton, type: .info, texture: SKTexture(imageNamed: "info_s"))
+        let infoButton = GameControlButton(size: Size.gameButton, type: .info, texture: SKTexture(imageNamed: "info"))
         infoButton.delegate = self
         infoButton.position = CGPoint(x: 20 + (Size.gameButton.width * 1.5), y: 10 + (Size.gameButton.width * 0.5))
         self.addChild(infoButton)
