@@ -113,7 +113,6 @@ public class GameScene: SKScene {
     // MARK: private
     
     private func setup() {
-        self.addBackground()
         self.backgroundColor = .white
         
         let movesLabel_position = CGPoint(x: 10, y: self.gameData.height - Double(FontSize.medium))
@@ -133,13 +132,6 @@ public class GameScene: SKScene {
         self.setupButtons()
         self.setupSafe()
         self.setupCode()
-    }
-    
-    private func addBackground() {
-        let background = SKShapeNode(rect: CGRect(x: 0, y: 0, width: self.gameData.width, height: self.gameData.height))
-        background.zPosition = 0
-        background.fillColor = .white
-        self.addChild(background)
     }
     
     private func setupLabel(label: SKLabelNode, position: CGPoint, fontSize: CGFloat, text: String, hAlignment: SKLabelHorizontalAlignmentMode) {
